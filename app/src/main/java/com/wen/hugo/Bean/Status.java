@@ -1,4 +1,4 @@
-package com.wen.hugo.Bean;
+package com.wen.hugo.bean;
 
 /**
  * Created by hugo on 11/21/17.

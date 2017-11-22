@@ -2,13 +2,15 @@ package com.wen.hugo.data;
 
 import android.support.annotation.NonNull;
 
-import com.wen.hugo.Bean.Comment;
-import com.wen.hugo.Bean.Status;
-import com.wen.hugo.Bean.User;
+import com.avos.avoscloud.AVException;
+import com.wen.hugo.bean.Comment;
+import com.wen.hugo.bean.Status;
+import com.wen.hugo.bean.User;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
+
 
 /**
  * Created by hugo on 11/21/17.
@@ -16,17 +18,17 @@ import io.reactivex.Flowable;
 
 public interface DataSource {
 
-    Flowable<List<Status>> getNewStatus(int skip,int limit);
+    Observable<List<Status>> getNewStatus(int skip, int limit);
 
-    Flowable<List<Status>> getTimeline(User my,long maxId,int limit);
+    Observable<List<Status>> getTimeline(User my, long maxId, int limit);
 
-    Flowable<List<Status>> getUserStatus(User user,long maxId,int limit);
+    Observable<List<Status>> getUserStatus(User user,long maxId,int limit);
 
-    Flowable<List<User>> getFollowers(User user,int skip,int limit);
+    Observable<List<User>> getFollowers(User user,int skip,int limit);
 
-    Flowable<List<User>> getFollowings(User user,int skip,int limit);
+    Observable<List<User>> getFollowings(User user,int skip,int limit);
 
-    Flowable<List<Comment>> getComments(Status status,int skip,int limit);
+    Observable<List<Comment>> getComments(Status status,int skip,int limit);
 
     boolean getRelationship(User user,boolean isFollower);
 
@@ -46,7 +48,7 @@ public interface DataSource {
 
     void deleteFile(String url);
 
-    User login(User user);
+    void login(String username,String password) throws AVException;
 
     void signUp(User user);
 
