@@ -16,8 +16,8 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SignUpCallback;
-import com.wen.hugo.MainActivity;
 import com.wen.hugo.R;
+import com.wen.hugo.publishStatus.PublishStatusActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,7 +110,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void succeed() {
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), PublishStatusActivity.class);
         startActivity(intent);
         getActivity().finish();
     }
