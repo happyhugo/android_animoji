@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
@@ -118,9 +119,12 @@ public class AVRemoteDataSource implements DataSource {
                     file.save();
                     url = file.getUrl();
                 }
+                AVObject statusDetail = new AVObject(STATUS_DETAIL);
+                statusDetail.save();
                 AVStatus status = new AVStatus();
                 status.setMessage(content);
                 status.setImageUrl(url);
+                status.put(DETAIL_ID, statusDetail);
                 AVStatus.sendStatusToFollowersInBackgroud(status, new SaveCallback() {
                     @Override
                     public void done(AVException exception) {

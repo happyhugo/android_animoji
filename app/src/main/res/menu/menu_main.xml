@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_people"
+        android:title="找人"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/logout"
+        android:title="注销"
+        android:showAsAction="never" />
+</menu>

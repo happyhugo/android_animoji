@@ -17,8 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.wen.hugo.MainActivity;
 import com.wen.hugo.R;
+import com.wen.hugo.timeLine.StatusListActivity;
 
 import java.io.IOException;
 
@@ -113,7 +113,7 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
 
     @Override
     public void succeed() {
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), StatusListActivity.class);
         startActivity(intent);
         getActivity().finish();
     }
