@@ -1,5 +1,6 @@
 package com.wen.hugo.data;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -78,8 +79,8 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public void addSendStatus(@NonNull Status status) {
-
+    public Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap) {
+        return mAVRemoteDataSource.addSendStatus(content,bitmap);
     }
 
     @Override
@@ -88,8 +89,8 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public String addUploadFile(@NonNull String path) {
-        return null;
+    public String addUploadFile(@NonNull Bitmap bitmap) throws AVException {
+        return mAVRemoteDataSource.addUploadFile(bitmap);
     }
 
     @Override

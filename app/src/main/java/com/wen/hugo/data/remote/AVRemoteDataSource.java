@@ -1,23 +1,37 @@
 package com.wen.hugo.data.remote;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SaveCallback;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * Created by hugo on 11/21/17.
  */
 
 public class AVRemoteDataSource implements DataSource {
+
+    public static final String LIKES = "likes";
+    public static final String STATUS_DETAIL = "StatusDetail";
+    public static final String DETAIL_ID = "detailId";
+    public static final String CREATED_AT = "createdAt";
+    public static final String FOLLOWER = "follower";
+    public static final String FOLLOWEE = "followee";
 
     private static AVRemoteDataSource INSTANCE;
 
@@ -88,8 +102,38 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public void addSendStatus(@NonNull Status status) {
+    public Observable<String> addSendStatus(@NonNull final String content,final Bitmap bitmap) {
 
+        return Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(final ObservableEmitter<String> e) throws Exception {
+                String url = "";
+                if(bitmap!=null) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                    byte[] bs = out.toByteArray();
+                    AVUser user = AVUser.getCurrentUser();
+                    String name = user.getUsername() + "_" + System.currentTimeMillis();
+                    final AVFile file = new AVFile(name, bs);
+                    file.save();
+                    url = file.getUrl();
+                }
+                AVStatus status = new AVStatus();
+                status.setMessage(content);
+                status.setImageUrl(url);
+                AVStatus.sendStatusToFollowersInBackgroud(status, new SaveCallback() {
+                    @Override
+                    public void done(AVException exception) {
+                         if(exception!=null){
+                             //这个时候其实应该将图片删除掉
+                             e.onNext(exception.getMessage());
+                         }else{
+                             e.onNext("");
+                         }
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -98,8 +142,15 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public String addUploadFile(@NonNull String path) {
-        return null;
+    public String addUploadFile(@NonNull Bitmap bitmap) throws AVException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+        byte[] bs = out.toByteArray();
+        AVUser user = AVUser.getCurrentUser();
+        String name = user.getUsername() + "_" + System.currentTimeMillis();
+        final AVFile file = new AVFile(name, bs);
+        file.save();
+        return file.getUrl();
     }
 
     @Override

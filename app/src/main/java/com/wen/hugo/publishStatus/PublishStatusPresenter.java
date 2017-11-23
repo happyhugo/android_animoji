@@ -10,6 +10,7 @@ import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by hugo on 11/22/17.
@@ -56,37 +57,32 @@ public class PublishStatusPresenter implements PublishStatusContract.Presenter {
     }
 
     @Override
-    public void publish(String content, Bitmap bitmap) {
-        if (!TextUtils.isEmpty(content) && bitmap!=null) {
+    public void publish(final String content,final Bitmap bitmap) {
+        if (!TextUtils.isEmpty(content)) {
             mPublishStatusView.setLoadingIndicator(true);
-
-//            mCompositeDisposable.add(Flowable.just(new User(name,password))
-//                    .map(new Function<User,String>() {
-//                        @Override
-//                        public String apply(User user) throws Exception {
-//                            try{
-//                                mDataRepository.login(user.getUserename(),user.getPassword());
-//                                return "";
-//                            }catch(AVException e){
-//                                return e.getMessage();
-//                            }
-//                        }
-//                    })
-//                    .subscribeOn(mSchedulerProvider.computation())
-//                    .observeOn(mSchedulerProvider.ui())
-//                    .subscribe(new Consumer<String>() {
-//                        @Override
-//                        public void accept(String reason) throws Exception {
-//                            mLoginView.setLoadingIndicator(false);
-//                            if(TextUtils.isEmpty(reason)){
-//                                mLoginView.succeed();
-//                            }else{
-//                                mLoginView.showLoadingError(reason);
-//                            }
-//                        }
-//                    }));
+            mCompositeDisposable.add(
+                mDataRepository.addSendStatus(content,bitmap)
+                .subscribeOn(mSchedulerProvider.computation())
+                .observeOn(mSchedulerProvider.ui())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String reason) {
+                        mPublishStatusView.setLoadingIndicator(false);
+                        if (TextUtils.isEmpty(reason)) {
+                            mPublishStatusView.succeed();
+                        } else {
+                            mPublishStatusView.showLoadingError(reason);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mPublishStatusView.setLoadingIndicator(false);
+                        mPublishStatusView.showLoadingError(throwable.getMessage());
+                    }
+                }));
         }else{
-            mPublishStatusView.showLoadingError("内容或图片不能为空");
+            mPublishStatusView.showLoadingError("内容不能为空");
         }
     }
 

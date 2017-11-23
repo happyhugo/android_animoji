@@ -1,5 +1,6 @@
 package com.wen.hugo.data.local;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
@@ -53,8 +54,8 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public void addSendStatus(@NonNull Status status) {
-
+    public Observable<String> addSendStatus(@NonNull final String content,final Bitmap bitmap) {
+           return null;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public String addUploadFile(@NonNull String path) {
+    public String addUploadFile(@NonNull Bitmap bitmap) {
         return null;
     }
 

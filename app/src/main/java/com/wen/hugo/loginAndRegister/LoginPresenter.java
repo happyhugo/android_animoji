@@ -4,14 +4,14 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.avos.avoscloud.AVException;
-import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 /**
  * Created by hugo on 11/22/17.
@@ -54,19 +54,18 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(String name, String password) {
+    public void login(final String name,final String password) {
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(password)) {
             mLoginView.setLoadingIndicator(true);
-
-            mCompositeDisposable.add(Flowable.just(new User(name,password))
-                    .map(new Function<User,String>() {
+            mCompositeDisposable.add(
+                    Observable.create(new ObservableOnSubscribe<String>() {
                         @Override
-                        public String apply(User user) throws Exception {
+                        public void subscribe(ObservableEmitter<String> e) throws Exception {
                             try{
-                                mDataRepository.login(user.getUserename(),user.getPassword());
-                                return "";
-                            }catch(AVException e){
-                                return e.getMessage();
+                                mDataRepository.login(name,password);
+                                e.onNext("");
+                            }catch(AVException exception){
+                                e.onNext(exception.getMessage());
                             }
                         }
                     })

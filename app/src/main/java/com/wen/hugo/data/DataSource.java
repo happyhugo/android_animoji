@@ -1,5 +1,6 @@
 package com.wen.hugo.data;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
@@ -32,11 +33,11 @@ public interface DataSource {
 
     boolean getRelationship(User user,boolean isFollower);
 
-    void addSendStatus(@NonNull Status status);
+    Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap);
 
     void addComment(@NonNull Comment comment);
 
-    String addUploadFile(@NonNull String path);
+    String addUploadFile(@NonNull Bitmap bitmap) throws AVException;
 
     void updateFollowAction(User user,boolean follow);
 
