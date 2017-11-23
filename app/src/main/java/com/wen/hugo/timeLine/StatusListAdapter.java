@@ -20,6 +20,7 @@ import com.wen.hugo.ListView.Status;
 import com.wen.hugo.ListView.StatusUtils;
 import com.wen.hugo.ListView.ViewHolder;
 import com.wen.hugo.R;
+import com.wen.hugo.personPage.PersonActivity;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -60,7 +61,7 @@ public class StatusListAdapter extends BaseListAdapter<Status> {
     avatarView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-//        PersonActivity.go(ctx, innerStatus.getSource());
+        PersonActivity.go(ctx, innerStatus.getSource());
       }
     });
 

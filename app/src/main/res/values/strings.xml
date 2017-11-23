@@ -2,4 +2,10 @@
     <string name="app_name">36wen</string>
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="status_mutual_follow">互相关注</string>
+    <string name="status_follower_desc">Ta关注了你</string>
+    <string name="status_following_desc">已关注</string>
+    <string name="status_cancelFollow">取消关注</string>
+    <string name="status_none_follow_desc">无</string>
+    <string name="status_follow">关注</string>
 </resources>

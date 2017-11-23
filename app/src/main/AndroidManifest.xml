@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".publishStatus.PublishStatusActivity"/>
+        <activity android:name=".personPage.PersonActivity"/>
         <activity
             android:name=".timeLine.StatusListActivity"
             android:label="广场" />
