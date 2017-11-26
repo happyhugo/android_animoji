@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVStatus;
+import com.avos.avoscloud.AVStatusQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
 import com.wen.hugo.bean.Comment;
@@ -15,6 +16,7 @@ import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -51,35 +53,40 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<Status>> getTimeline(User my, long maxId, int limit) {
-//        return Observable.just(my)
-//                .flatMap(new Function<User, Observable<List<Status>>>() {
-//                    @Override
-//                    public Observable<List<Status>> apply(User users) throws Exception {
-//                        AVUser user = (AVUser ) users;
-//                        AVStatusQuery q = AVStatus.inboxQuery(user, AVStatus.INBOX_TYPE.TIMELINE.toString());
-//                        q.include(App.DETAIL_ID);
-//                        q.setLimit(limit);
-//                        q.setMaxId(maxId);
-//                        q.orderByDescending(App.CREATED_AT);
-//                        List<AVStatus> avStatuses = q.find();
-//                        List<Status> statuses = new ArrayList<Status>();
-//                        System.out.println("bbbb:"+avStatuses.size());
-//                        for(int i = 0; i < avStatuses.size(); i++){
-//                            Status status = new Status();
-//                            status.setInnerStatus(avStatuses.get(i));
-//                            status.setDetail(avStatuses.get(i).getAVObject(App.DETAIL_ID));
-//                            statuses.add(status);   //包括两张表的对象
-//                        }
-//                        return Observable.just(a);
-//                    }
-//                }).observeOn(Schedulers.io());
-        return null;
+    public List<Status> getTimeline(long maxId, int limit) throws AVException {
+        AVUser user = AVUser.getCurrentUser();
+        AVStatusQuery q = AVStatus.inboxQuery(user, AVStatus.INBOX_TYPE.TIMELINE.toString());
+        q.include(DETAIL_ID);
+        q.setLimit(limit);
+        q.setMaxId(maxId);
+        q.orderByDescending(CREATED_AT);
+        List<AVStatus> avStatuses = q.find();
+        List<Status> statuses = new ArrayList<Status>();
+        for(int i = 0; i < avStatuses.size(); i++){
+            Status status = new Status();
+            status.setInnerStatus(avStatuses.get(i));
+            status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
+            statuses.add(status);   //包括两张表的对象
+        }
+        return statuses;
     }
 
     @Override
-    public Observable<List<Status>> getUserStatus(User user, long maxId, int limit) {
-        return null;
+    public List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException {
+        AVStatusQuery q = AVStatus.statusQuery(user);
+        q.include(DETAIL_ID);
+        q.orderByDescending(CREATED_AT);
+        q.setSkip(skip);
+        q.setLimit(limit);
+        List<AVStatus> avStatuses = q.find();
+        List<Status> statuses = new ArrayList<Status>();
+        for(int i = 0; i < avStatuses.size(); i++){
+            Status status = new Status();
+            status.setInnerStatus(avStatuses.get(i));
+            status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
+            statuses.add(status);
+        }
+        return statuses;
     }
 
     @Override
@@ -163,13 +170,18 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public void updateStatusLikes(Status status, List<String> likes) {
-
+    public void updateStatusLikes(Status status, List<String> likes) throws AVException {
+        AVObject detail = status.getDetail();
+        detail.put(LIKES, likes);
+        detail.save();
     }
 
     @Override
-    public void deleteStatus(Status status) {
-
+    public void deleteStatus(Status status) throws AVException {
+        AVStatus innerStatus = status.getInnerStatus();
+        innerStatus.delete();
+        AVObject detail = status.getDetail();
+        detail.delete();
     }
 
     @Override

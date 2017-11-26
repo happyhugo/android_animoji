@@ -7,7 +7,7 @@
 
     <include layout="@layout/status_menu" />
 
-    <com.wen.hugo.ListView.BaseListView
+    <com.wen.hugo.widget.ListView.BaseListView
         android:id="@+id/status_List"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

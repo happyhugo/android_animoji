@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.wen.hugo.R;
-import com.wen.hugo.timeLine.StatusListActivity;
 
 import java.io.IOException;
 
@@ -113,8 +112,7 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
 
     @Override
     public void succeed() {
-        Intent intent = new Intent(getContext(), StatusListActivity.class);
-        startActivity(intent);
+        getActivity().setResult(getActivity().RESULT_OK);
         getActivity().finish();
     }
 
@@ -149,7 +147,7 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.result(requestCode, resultCode,data.getData());
+        mPresenter.result(requestCode, resultCode,data!=null?data.getData():null);
     }
 
     @Override

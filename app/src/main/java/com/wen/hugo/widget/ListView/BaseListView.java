@@ -1,4 +1,4 @@
-package com.wen.hugo.ListView;
+package com.wen.hugo.widget.ListView;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.wen.hugo.ListView.xlist.XListView;
+import com.wen.hugo.widget.ListView.xlist.XListView;
 
 import java.util.ArrayList;
 import java.util.List;

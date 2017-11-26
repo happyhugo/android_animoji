@@ -1,4 +1,4 @@
-package com.wen.hugo.ListView.xlist;
+package com.wen.hugo.widget.ListView.xlist;
 
 import android.content.Context;
 import android.util.AttributeSet;

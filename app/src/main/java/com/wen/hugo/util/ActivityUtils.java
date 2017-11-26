@@ -16,10 +16,12 @@
 
 package com.wen.hugo.util;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.Toast;
 
 /**
  * This provides methods to help Activities load their UI.
@@ -39,4 +41,16 @@ public class ActivityUtils {
         transaction.commit();
     }
 
+    public static void toast(Context context, String str) {
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public static boolean filterException(Context ctx, Exception e) {
+        if (e != null) {
+            toast(ctx, e.getMessage());
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

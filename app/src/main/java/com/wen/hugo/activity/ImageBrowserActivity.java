@@ -1,4 +1,4 @@
-package com.wen.hugo.ListView;
+package com.wen.hugo.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
+import com.wen.hugo.util.ImageUtils;
 
 /**
  * Created by lzw on 14-9-21.
@@ -22,6 +23,6 @@ public class ImageBrowserActivity extends Activity {
     imageView = (ImageView) findViewById(R.id.imageView);
     Intent intent = getIntent();
     url = intent.getStringExtra("url");
-    ImageLoader.getInstance().displayImage(url, imageView, StatusUtils.normalImageOptions);
+    ImageLoader.getInstance().displayImage(url, imageView, ImageUtils.normalImageOptions);
   }
 }

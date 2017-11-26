@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.bean.User;
@@ -24,12 +25,12 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<Status>> getTimeline(User my, long maxId, int limit) {
+    public List<Status> getTimeline(long maxId, int limit) throws AVException {
         return null;
     }
 
     @Override
-    public Observable<List<Status>> getUserStatus(User user, long maxId, int limit) {
+    public List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException {
         return null;
     }
 

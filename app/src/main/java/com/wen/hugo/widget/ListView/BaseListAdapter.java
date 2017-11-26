@@ -1,6 +1,7 @@
-package com.wen.hugo.ListView;
+package com.wen.hugo.widget.ListView;
 
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,5 +79,19 @@ public class BaseListAdapter<T> extends BaseAdapter {
   public void clear() {
     datas.clear();
     notifyDataSetChanged();
+  }
+
+  public <T extends View> T findViewById(View view, int id) {
+      SparseArray<View> viewHolder = (SparseArray<View>) view.getTag();
+      if (viewHolder == null) {
+        viewHolder = new SparseArray<View>();
+        view.setTag(viewHolder);
+      }
+      View childView = viewHolder.get(id);
+      if (childView == null) {
+        childView = view.findViewById(id);
+        viewHolder.put(id, childView);
+      }
+      return (T) childView;
   }
 }

@@ -1,26 +1,23 @@
-package com.wen.hugo.timeLine;
+package com.wen.hugo.userPage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.SaveCallback;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.wen.hugo.ListView.BaseListAdapter;
-import com.wen.hugo.ListView.ImageBrowserActivity;
-import com.wen.hugo.ListView.Status;
-import com.wen.hugo.ListView.StatusUtils;
-import com.wen.hugo.ListView.ViewHolder;
 import com.wen.hugo.R;
-import com.wen.hugo.personPage.PersonActivity;
+import com.wen.hugo.activity.ImageBrowserActivity;
+import com.wen.hugo.bean.Status;
+import com.wen.hugo.util.ImageUtils;
+import com.wen.hugo.widget.ListView.BaseListAdapter;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -32,10 +29,16 @@ import java.util.List;
 /**
  * Created by lzw on 15/1/2.
  */
-public class StatusListAdapter extends BaseListAdapter<Status> {
+public class UserPageListAdapter extends BaseListAdapter<Status> {
 
-  public StatusListAdapter(Context ctx) {
+  private UserPageContract.Presenter mPresenter;
+
+  public UserPageListAdapter(Context ctx) {
     super(ctx);
+  }
+
+  public void setPresenter(@NonNull UserPageContract.Presenter presenter) {
+    mPresenter = presenter;
   }
 
   @Override
@@ -43,25 +46,25 @@ public class StatusListAdapter extends BaseListAdapter<Status> {
     if (conView == null) {
       conView = inflater.inflate(R.layout.status_item, null, false);
     }
-    TextView nameView = ViewHolder.findViewById(conView, com.wen.hugo.R.id.nameView);
-    TextView textView = ViewHolder.findViewById(conView, R.id.statusText);
-    ImageView avatarView = ViewHolder.findViewById(conView, R.id.avatarView);
-    ImageView imageView = ViewHolder.findViewById(conView, R.id.statusImage);
-    ImageView likeView = ViewHolder.findViewById(conView, R.id.likeView);
-    TextView likeCountView = ViewHolder.findViewById(conView, R.id.likeCount);
-    View likeLayout = ViewHolder.findViewById(conView, R.id.likeLayout);
-    TextView timeView = ViewHolder.findViewById(conView, R.id.timeView);
+    TextView nameView = findViewById(conView, R.id.nameView);
+    TextView textView = findViewById(conView, R.id.statusText);
+    ImageView avatarView = findViewById(conView, R.id.avatarView);
+    ImageView imageView = findViewById(conView, R.id.statusImage);
+    ImageView likeView = findViewById(conView, R.id.likeView);
+    TextView likeCountView = findViewById(conView, R.id.likeCount);
+    View likeLayout = findViewById(conView, R.id.likeLayout);
+    TextView timeView = findViewById(conView, R.id.timeView);
 
     final Status status = datas.get(position);
     final AVStatus innerStatus = status.getInnerStatus();
     AVUser source = innerStatus.getSource();
-    StatusUtils.displayAvatar(source, avatarView);
+    ImageUtils.displayAvatar(source, avatarView);
     nameView.setText(source.getUsername());
 
     avatarView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        PersonActivity.go(ctx, innerStatus.getSource());
+        UserPageActivity.go(ctx, innerStatus.getSource());
       }
     });
 
@@ -74,7 +77,7 @@ public class StatusListAdapter extends BaseListAdapter<Status> {
     if (TextUtils.isEmpty(innerStatus.getImageUrl()) == false) {
       imageView.setVisibility(View.VISIBLE);
       ImageLoader.getInstance().displayImage(innerStatus.getImageUrl(),
-          imageView, StatusUtils.normalImageOptions);
+          imageView, ImageUtils.normalImageOptions);
       imageView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -113,31 +116,12 @@ public class StatusListAdapter extends BaseListAdapter<Status> {
     likeLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        SaveCallback saveCallback = new SaveCallback() {
-          @Override
-          public void done(AVException e) {
-            if (StatusUtils.filterException(ctx, e)) {
-              notifyDataSetChanged();
-            }
-          }
-        };
-        if (contains) {
-          likes.remove(userId);
-            saveStatusLikes(detail, likes, saveCallback);
-        } else {
-          likes.add(userId);
-            saveStatusLikes(detail, likes, saveCallback);
-        }
+          mPresenter.updateStatusLikes(status,likes);
       }
     });
 
     timeView.setText(millisecs2DateString(innerStatus.getCreatedAt().getTime()));
     return conView;
-  }
-
-  public static void saveStatusLikes(AVObject detail, List<String> likes, SaveCallback saveCallback) {
-    detail.put(StatusListActivity.LIKES, likes);
-    detail.saveInBackground(saveCallback);
   }
 
   public static PrettyTime prettyTime = new PrettyTime();

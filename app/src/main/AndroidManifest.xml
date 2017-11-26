@@ -20,11 +20,11 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".publishStatus.PublishStatusActivity"/>
-        <activity android:name=".personPage.PersonActivity"/>
+        <activity android:name=".userPage.UserPageActivity"/>
         <activity
-            android:name=".timeLine.StatusListActivity"
+            android:name=".timeLine.TimeLineActivity"
             android:label="广场" />
-        <activity android:name=".ListView.ImageBrowserActivity"/>
+        <activity android:name=".activity.ImageBrowserActivity"/>
     </application>
 
 

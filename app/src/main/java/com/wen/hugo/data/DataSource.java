@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.bean.User;
@@ -21,9 +22,9 @@ public interface DataSource {
 
     Observable<List<Status>> getNewStatus(int skip, int limit);
 
-    Observable<List<Status>> getTimeline(User my, long maxId, int limit);
+    List<Status> getTimeline(long maxId, int limit) throws AVException;
 
-    Observable<List<Status>> getUserStatus(User user,long maxId,int limit);
+    List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException;
 
     Observable<List<User>> getFollowers(User user,int skip,int limit);
 
@@ -41,9 +42,9 @@ public interface DataSource {
 
     void updateFollowAction(User user,boolean follow);
 
-    void updateStatusLikes(Status status,List<String> likes);
+    void updateStatusLikes(Status status,List<String> likes) throws AVException;
 
-    void deleteStatus(Status status);
+    void deleteStatus(Status status) throws AVException;
 
     void deleteComment(Comment comment);
 

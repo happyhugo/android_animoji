@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.bean.User;
@@ -49,13 +50,13 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public Observable<List<Status>> getTimeline(User my, long maxId, int limit) {
-        return null;
+    public List<Status> getTimeline(long maxId, int limit) throws AVException {
+        return mAVRemoteDataSource.getTimeline(maxId,limit);
     }
 
     @Override
-    public Observable<List<Status>> getUserStatus(User user, long maxId, int limit) {
-        return null;
+    public List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException{
+        return mAVRemoteDataSource.getUserStatusList(user, skip, limit);
     }
 
     @Override
@@ -99,13 +100,13 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public void updateStatusLikes(Status status, List<String> likes) {
-
+    public void updateStatusLikes(Status status, List<String> likes) throws AVException {
+        mAVRemoteDataSource.updateStatusLikes(status, likes);
     }
 
     @Override
-    public void deleteStatus(Status status) {
-
+    public void deleteStatus(Status status) throws AVException {
+        mAVRemoteDataSource.deleteStatus(status);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.wen.hugo.ListView;
+package com.wen.hugo.widget.ListView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -33,7 +33,7 @@ public abstract class StatusNetAsyncTask extends AsyncTask<Void, Void, Void> {
   protected void onPreExecute() {
     super.onPreExecute();
     if (openDialog) {
-      dialog = StatusUtils.showSpinnerDialog((Activity) ctx);
+      dialog = showSpinnerDialog((Activity) ctx);
     }
   }
 
@@ -62,4 +62,13 @@ public abstract class StatusNetAsyncTask extends AsyncTask<Void, Void, Void> {
   protected abstract void doInBack() throws Exception;
 
   protected abstract void onPost(Exception e);
+
+  public ProgressDialog showSpinnerDialog(Activity activity) {
+    ProgressDialog dialog = new ProgressDialog(activity);
+    dialog.setMessage("加载中");
+    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+    dialog.setCancelable(true);
+    dialog.show();
+    return dialog;
+  }
 }
