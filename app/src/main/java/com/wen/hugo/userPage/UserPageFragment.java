@@ -23,6 +23,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FollowCallback;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.util.ActivityUtils;
 import com.wen.hugo.widget.ListView.BaseListView;
 import com.wen.hugo.widget.ListView.StatusNetAsyncTask;
@@ -175,7 +176,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
             }
 
             @Override
-            public void onItemLongPressed(final Status item) {
+            public boolean onItemLongPressed(final Status item) {
                 AVStatus innerStatus = item.getInnerStatus();
                 AVUser source = innerStatus.getSource();
                 if (source.getObjectId().equals(AVUser.getCurrentUser().getObjectId())) {
@@ -188,6 +189,12 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
                     }).setNegativeButton("取消", null);
                     builder.show();
                 }
+                return true;
+            }
+
+            @Override
+            public void onItemSelected(final Status item){
+                StatusPageActivity.go(getContext(),item.getInnerStatus().getObjectId());
             }
 
         }, adapter);

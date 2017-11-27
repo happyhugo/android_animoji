@@ -30,13 +30,13 @@ public interface DataSource {
 
     Observable<List<User>> getFollowings(User user,int skip,int limit);
 
-    Observable<List<Comment>> getComments(Status status,int skip,int limit);
+    List<Comment> getComments(String statusId,int skip,int limit) throws AVException;
 
     boolean getRelationship(User user,boolean isFollower);
 
     Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap);
 
-    void addComment(@NonNull Comment comment);
+    void addComment(String statusId,@NonNull Comment comment) throws AVException;
 
     String addUploadFile(@NonNull Bitmap bitmap) throws AVException;
 
@@ -46,7 +46,7 @@ public interface DataSource {
 
     void deleteStatus(Status status) throws AVException;
 
-    void deleteComment(Comment comment);
+    void deleteComment(Comment comment) throws AVException;
 
     void deleteFile(String url);
 

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVStatusQuery;
 import com.avos.avoscloud.AVUser;
@@ -33,6 +34,7 @@ public class AVRemoteDataSource implements DataSource {
     public static final String STATUS_DETAIL = "StatusDetail";
     public static final String DETAIL_ID = "detailId";
     public static final String CREATED_AT = "createdAt";
+
     public static final String FOLLOWER = "follower";
     public static final String FOLLOWEE = "followee";
 
@@ -100,8 +102,24 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<Comment>> getComments(Status status, int skip, int limit) {
-        return null;
+    public List<Comment> getComments(String statusId, int skip, int limit) throws AVException {
+        AVQuery<AVObject> query = new AVQuery<>(Comment.COMMENT);
+        query.whereEqualTo(Comment.STATUS_ID, statusId);
+        query.setSkip(skip);
+        query.setLimit(limit);
+        query.orderByAscending("createdAt");
+        query.include(Comment.FROM);
+        query.include(Comment.REPLAY);
+        List<AVObject> avComments = query.find();
+        List<Comment> comments = new ArrayList<>();
+        for(int i=0;i<avComments.size();i++){
+            Comment comment = new Comment();
+            comment.setComment(avComments.get(i));
+            comment.setFrom(avComments.get(i).getAVUser(Comment.FROM));
+            comment.setReplayTo(avComments.get(i).getAVUser(Comment.REPLAY));
+            comments.add(comment);
+        }
+        return comments;
     }
 
     @Override
@@ -148,8 +166,16 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public void addComment(@NonNull Comment comment) {
-
+    public void addComment(String statusId,@NonNull Comment comment) throws AVException {
+        AVObject comments = new AVObject(Comment.COMMENT);
+        comments.put(Comment.FROM,comment.getFrom());
+        if(comment.getReplayTo()!=null) {
+            comments.put(Comment.REPLAY, comment.getReplayTo());
+        }
+        comments.put(Comment.CONTENT,comment.getContent());
+        comments.put(Comment.STATUS_ID,statusId);
+        comment.setComment(comments);
+        comments.save();
     }
 
     @Override
@@ -185,8 +211,9 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public void deleteComment(Comment comment) {
-
+    public void deleteComment(Comment comment)throws AVException{
+        AVObject comments = comment.getComment();
+        comments.delete();
     }
 
     @Override

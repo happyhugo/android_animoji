@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by lzw on 15/1/2.
- */
+
 public class UserPageListAdapter extends BaseListAdapter<Status> {
 
   private UserPageContract.Presenter mPresenter;
@@ -60,13 +58,6 @@ public class UserPageListAdapter extends BaseListAdapter<Status> {
     AVUser source = innerStatus.getSource();
     ImageUtils.displayAvatar(source, avatarView);
     nameView.setText(source.getUsername());
-
-    avatarView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        UserPageActivity.go(ctx, innerStatus.getSource());
-      }
-    });
 
     if (TextUtils.isEmpty(innerStatus.getMessage())) {
       textView.setVisibility(View.GONE);

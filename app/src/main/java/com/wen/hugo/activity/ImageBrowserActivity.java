@@ -9,9 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
 import com.wen.hugo.util.ImageUtils;
 
-/**
- * Created by lzw on 14-9-21.
- */
+
 public class ImageBrowserActivity extends Activity {
   String url;
   ImageView imageView;

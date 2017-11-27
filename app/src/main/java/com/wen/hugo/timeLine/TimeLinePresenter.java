@@ -18,8 +18,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Created by hugo on 11/22/17.
  */
@@ -130,10 +128,5 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     @Override
     public List<Status> getTimeline(long maxId, int limit) throws AVException {
         return mDataRepository.getTimeline(maxId, limit);
-    }
-
-    @Override
-    public void deleteStatus(Status status) throws AVException {
-        mDataRepository.deleteStatus(status);
     }
 }

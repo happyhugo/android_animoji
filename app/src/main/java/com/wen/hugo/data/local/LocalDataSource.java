@@ -45,7 +45,7 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<Comment>> getComments(Status status, int skip, int limit) {
+    public List<Comment> getComments(String statusId, int skip, int limit) throws AVException {
         return null;
     }
 
@@ -60,7 +60,7 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public void addComment(@NonNull Comment comment) {
+    public void addComment(String statusId,@NonNull Comment comment) {
 
     }
 

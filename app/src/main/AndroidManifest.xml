@@ -12,19 +12,24 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".loginAndRegister.LoginActivity"
-            android:label="@string/app_name">
+            android:label="36问">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".publishStatus.PublishStatusActivity"/>
-        <activity android:name=".userPage.UserPageActivity"/>
+        <activity android:name=".publishStatus.PublishStatusActivity"
+            android:label="发布状态"/>
+        <activity android:name=".userPage.UserPageActivity"
+            android:label="用户主页"/>
+        <activity android:name=".statusPage.StatusPageActivity"
+            android:label="评论"/>
         <activity
             android:name=".timeLine.TimeLineActivity"
             android:label="广场" />
-        <activity android:name=".activity.ImageBrowserActivity"/>
+        <activity android:name=".activity.ImageBrowserActivity"
+            android:label="图片展示" />
     </application>
 
 

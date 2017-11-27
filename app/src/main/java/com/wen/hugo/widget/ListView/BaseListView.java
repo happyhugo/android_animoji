@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by lzw on 15/1/2.
- */
 public class BaseListView<T> extends XListView implements XListView.IXListViewListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
   private static final int ONE_PAGE_SIZE = 10;
   BaseListAdapter<T> adapter;
@@ -44,7 +41,8 @@ public class BaseListView<T> extends XListView implements XListView.IXListViewLi
     public void onItemSelected(T item) {
     }
 
-    public void onItemLongPressed(T item) {
+    public boolean onItemLongPressed(T item) {
+      return false;
     }
   }
 
@@ -125,9 +123,10 @@ public class BaseListView<T> extends XListView implements XListView.IXListViewLi
   public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
     T item = (T) parent.getAdapter().getItem(position);
     if (dataInterface != null) {
-      dataInterface.onItemLongPressed(item);
+      return dataInterface.onItemLongPressed(item);
+    }else {
+      return false;
     }
-    return false;
   }
 
 

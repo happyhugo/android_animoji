@@ -27,9 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by lzw on 15/1/2.
- */
+
 public class TimeLineListAdapter extends BaseListAdapter<Status> {
 
   private TimeLineContract.Presenter mPresenter;

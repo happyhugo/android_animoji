@@ -70,8 +70,8 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public Observable<List<Comment>> getComments(Status status, int skip, int limit) {
-        return null;
+    public List<Comment> getComments(String statusId, int skip, int limit) throws AVException {
+        return mAVRemoteDataSource.getComments(statusId, skip, limit);
     }
 
     @Override
@@ -85,8 +85,8 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public void addComment(@NonNull Comment comment) {
-
+    public void addComment(String statusId,@NonNull Comment comment) throws AVException{
+        mAVRemoteDataSource.addComment(statusId,comment);
     }
 
     @Override
@@ -110,8 +110,8 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public void deleteComment(Comment comment) {
-
+    public void deleteComment(Comment comment) throws AVException{
+        mAVRemoteDataSource.deleteComment(comment);
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.avos.avoscloud.AVStatus;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
+import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.widget.ListView.BaseListView;
 
 import java.util.ArrayList;
@@ -110,6 +111,12 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
                     return mPresenter.getTimeline(maxId, limit);
                 }
             }
+
+            @Override
+            public void onItemSelected(final Status item){
+                StatusPageActivity.go(getContext(),item.getInnerStatus().getObjectId());
+            }
+
         }, adapter);
     }
 
