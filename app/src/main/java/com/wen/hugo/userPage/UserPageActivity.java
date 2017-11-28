@@ -40,7 +40,7 @@ public class UserPageActivity extends AppCompatActivity {
 
   public static void go(Context context, AVUser item) {
     Intent intent = new Intent(context, UserPageActivity.class);
-    intent.putExtra(UserPageFragment.USER_ID, item.getObjectId());
+    intent.putExtra(UserPageFragment.USER, item);
     context.startActivity(intent);
   }
 }

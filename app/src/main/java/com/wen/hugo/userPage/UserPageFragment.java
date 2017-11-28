@@ -51,7 +51,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
     public static final String FOLLOWERss = "follower";
     public static final String FOLLOWEEss = "followee";
 
-    public static final String USER_ID = "userId";
+    public static final String USER = "user";
 
     private AVUser user;
 
@@ -159,11 +159,13 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     private void init() {
         Intent intent = getActivity().getIntent();
-        String userId = intent.getStringExtra(USER_ID);
+        AVUser other = intent.getParcelableExtra(USER);
         AVUser currentUser = AVUser.getCurrentUser();
-        myself = userId.equals(currentUser.getObjectId());
-        if(myself){
+        if(currentUser.equals(other)){
+            myself = true;
             user = currentUser;
+        }else{
+            user = other;
         }
     }
 
