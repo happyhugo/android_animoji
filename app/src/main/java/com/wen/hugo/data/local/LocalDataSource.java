@@ -35,12 +35,12 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<User>> getFollowers(User user, int skip, int limit) {
+    public List<AVUser> getFollows(String userId, int skip, int limit) throws AVException {
         return null;
     }
 
     @Override
-    public Observable<List<User>> getFollowings(User user, int skip, int limit) {
+    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException {
         return null;
     }
 

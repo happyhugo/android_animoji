@@ -92,13 +92,21 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public Observable<List<User>> getFollowers(User user, int skip, int limit) {
-        return null;
+    public List<AVUser> getFollows(String userId, int skip, int limit) throws AVException {
+        AVQuery<AVUser> q = AVUser.followerQuery(userId,AVUser.class);
+        q.skip(skip);
+        q.limit(limit);
+        q.include(FOLLOWER);
+        return q.find();
     }
 
     @Override
-    public Observable<List<User>> getFollowings(User user, int skip, int limit) {
-        return null;
+    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException {
+        AVQuery<AVUser> q = AVUser.followeeQuery(userId,AVUser.class);
+        q.skip(skip);
+        q.limit(limit);
+        q.include(FOLLOWEE);
+        return q.find();
     }
 
     @Override

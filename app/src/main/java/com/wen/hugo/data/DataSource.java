@@ -26,9 +26,9 @@ public interface DataSource {
 
     List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException;
 
-    Observable<List<User>> getFollowers(User user,int skip,int limit);
+    List<AVUser> getFollows(String userId, int skip, int limit) throws AVException;
 
-    Observable<List<User>> getFollowings(User user,int skip,int limit);
+    List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException;
 
     List<Comment> getComments(String statusId,int skip,int limit) throws AVException;
 

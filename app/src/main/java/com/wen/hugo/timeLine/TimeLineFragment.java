@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVStatus;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.followPage.FollowPageActivity;
+import com.wen.hugo.followPage.FollowPageFragment;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.widget.ListView.BaseListView;
@@ -83,6 +85,16 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     void goSend() {
         Intent intent = new Intent(getActivity(), PublishStatusActivity.class);
         startActivityForResult(intent, SEND_REQUEST);
+    }
+
+    @OnClick(R.id.followers)
+    void goFollowers() {
+        FollowPageActivity.goFollow(getContext(),FollowPageFragment.TYPE_FOLLOWER);
+    }
+
+    @OnClick(R.id.following)
+    void goFollowing() {
+        FollowPageActivity.goFollow(getContext(),FollowPageFragment.TYPE_FOLLOWING);
     }
 
     @Override

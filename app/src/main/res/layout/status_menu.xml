@@ -9,12 +9,34 @@
     <TextView
         android:id="@+id/send"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:padding="10dp"
         android:gravity="center"
         android:textSize="14sp"
         android:layout_margin="5dp"
         android:text="说两句" />
 
+    <TextView
+        android:id="@+id/followers"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_margin="5dp"
+        android:text="粉丝"/>
+
+    <TextView
+        android:id="@+id/following"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_margin="5dp"
+        android:text="关注"/>
 
 </LinearLayout>

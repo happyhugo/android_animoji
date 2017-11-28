@@ -60,13 +60,13 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public Observable<List<User>> getFollowers(User user, int skip, int limit) {
-        return null;
+    public List<AVUser> getFollows(String userId, int skip, int limit) throws AVException{
+        return mAVRemoteDataSource.getFollows(userId, skip, limit);
     }
 
     @Override
-    public Observable<List<User>> getFollowings(User user, int skip, int limit) {
-        return null;
+    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException{
+        return mAVRemoteDataSource.getFollowing(userId, skip, limit);
     }
 
     @Override
