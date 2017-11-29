@@ -18,6 +18,7 @@ import com.wen.hugo.data.DataSource;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -50,24 +51,47 @@ public class AVRemoteDataSource implements DataSource {
     private AVRemoteDataSource(){}
 
     @Override
-    public Observable<List<Status>> getNewStatus(int skip, int limit) {
-        return null;
+    public List<Status> getNewStatus(int skip, int limit) throws AVException {
+        AVQuery<AVObject> q = new AVQuery<>("_Status");
+//        q.include("_User");
+        q.include(DETAIL_ID);
+        q.setLimit(limit);
+        q.setSkip(skip);
+        q.orderByDescending(CREATED_AT);
+        List<AVObject> avStatuses = q.find();
+        List<Status> statuses = new ArrayList<>();
+        for(int i = 0; i < avStatuses.size(); i++){
+            Status status = new Status();
+            status.setStatus(avStatuses.get(i));
+            status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
+            System.out.println("qqqq:"+ avStatuses.get(i));
+            status.setUser((AVUser) avStatuses.get(i).getAVObject("source"));
+            status.setDate((Date) avStatuses.get(i).get("createdAt"));
+            status.setImg((String)avStatuses.get(i).get("image"));
+            status.setMessage((String)avStatuses.get(i).get("message"));
+            statuses.add(status);   //包括两张表的对象
+        }
+        return statuses;
     }
 
     @Override
-    public List<Status> getTimeline(long maxId, int limit) throws AVException {
+    public List<Status> getTimeline(int skip, int limit) throws AVException {
         AVUser user = AVUser.getCurrentUser();
         AVStatusQuery q = AVStatus.inboxQuery(user, AVStatus.INBOX_TYPE.TIMELINE.toString());
         q.include(DETAIL_ID);
         q.setLimit(limit);
-        q.setMaxId(maxId);
+        q.setSkip(skip);
         q.orderByDescending(CREATED_AT);
         List<AVStatus> avStatuses = q.find();
-        List<Status> statuses = new ArrayList<Status>();
+        List<Status> statuses = new ArrayList<>();
         for(int i = 0; i < avStatuses.size(); i++){
             Status status = new Status();
-            status.setInnerStatus(avStatuses.get(i));
+            status.setStatus(avStatuses.get(i));
+            status.setUser(avStatuses.get(i).getSource());
             status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
+            status.setMessage(avStatuses.get(i).getMessage());
+            status.setImg(avStatuses.get(i).getImageUrl());
+            status.setDate(avStatuses.get(i).getCreatedAt());
             statuses.add(status);   //包括两张表的对象
         }
         return statuses;
@@ -84,8 +108,12 @@ public class AVRemoteDataSource implements DataSource {
         List<Status> statuses = new ArrayList<Status>();
         for(int i = 0; i < avStatuses.size(); i++){
             Status status = new Status();
-            status.setInnerStatus(avStatuses.get(i));
+            status.setStatus(avStatuses.get(i));
+            status.setUser(avStatuses.get(i).getSource());
             status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
+            status.setMessage(avStatuses.get(i).getMessage());
+            status.setImg(avStatuses.get(i).getImageUrl());
+            status.setDate(avStatuses.get(i).getCreatedAt());
             statuses.add(status);
         }
         return statuses;
@@ -212,10 +240,8 @@ public class AVRemoteDataSource implements DataSource {
 
     @Override
     public void deleteStatus(Status status) throws AVException {
-        AVStatus innerStatus = status.getInnerStatus();
-        innerStatus.delete();
-        AVObject detail = status.getDetail();
-        detail.delete();
+        status.getStatus().delete();
+        status.getDetail().delete();
     }
 
     @Override

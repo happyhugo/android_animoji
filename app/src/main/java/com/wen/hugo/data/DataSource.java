@@ -20,9 +20,9 @@ import io.reactivex.Observable;
 
 public interface DataSource {
 
-    Observable<List<Status>> getNewStatus(int skip, int limit);
+    List<Status> getNewStatus(int skip, int limit) throws AVException;
 
-    List<Status> getTimeline(long maxId, int limit) throws AVException;
+    List<Status> getTimeline(int skip, int limit) throws AVException;
 
     List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException;
 

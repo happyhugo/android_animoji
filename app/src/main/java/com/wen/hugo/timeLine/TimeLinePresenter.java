@@ -126,7 +126,7 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     }
 
     @Override
-    public List<Status> getTimeline(long maxId, int limit) throws AVException {
-        return mDataRepository.getTimeline(maxId, limit);
+    public List<Status> getTimeline(int skip, int limit) throws AVException {
+        return mDataRepository.getTimeline(skip, limit);
     }
 }

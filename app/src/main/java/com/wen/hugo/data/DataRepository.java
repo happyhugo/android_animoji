@@ -45,13 +45,13 @@ public class DataRepository implements DataSource{
     }
 
     @Override
-    public Observable<List<Status>> getNewStatus(int skip, int limit) {
-        return null;
+    public List<Status> getNewStatus(int skip, int limit) throws AVException {
+        return mAVRemoteDataSource.getNewStatus(skip,limit);
     }
 
     @Override
-    public List<Status> getTimeline(long maxId, int limit) throws AVException {
-        return mAVRemoteDataSource.getTimeline(maxId,limit);
+    public List<Status> getTimeline(int skip, int limit) throws AVException {
+        return mAVRemoteDataSource.getTimeline(skip,limit);
     }
 
     @Override

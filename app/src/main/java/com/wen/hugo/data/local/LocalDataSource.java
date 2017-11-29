@@ -20,12 +20,12 @@ import io.reactivex.Observable;
 
 public class LocalDataSource implements DataSource {
     @Override
-    public Observable<List<Status>> getNewStatus(int skip, int limit) {
+    public List<Status> getNewStatus(int skip, int limit) {
         return null;
     }
 
     @Override
-    public List<Status> getTimeline(long maxId, int limit) throws AVException {
+    public List<Status> getTimeline(int skip, int limit) throws AVException {
         return null;
     }
 

@@ -24,6 +24,6 @@ public interface TimeLineContract {
 
         void updateStatusLikes(Status status,List<String> likes);
 
-        List<Status> getTimeline(long maxId, int limit)  throws AVException;
+        List<Status> getTimeline(int skip, int limit)  throws AVException;
     }
 }

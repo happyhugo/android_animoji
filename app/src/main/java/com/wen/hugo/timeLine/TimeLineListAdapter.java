@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVUser;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
@@ -55,33 +54,32 @@ public class TimeLineListAdapter extends BaseListAdapter<Status> {
     TextView timeView = findViewById(conView, R.id.timeView);
 
     final Status status = datas.get(position);
-    final AVStatus innerStatus = status.getInnerStatus();
-    AVUser source = innerStatus.getSource();
+    final AVUser source = status.getUser();
     ImageUtils.displayAvatar(source, avatarView);
     nameView.setText(source.getUsername());
 
     avatarView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        UserPageActivity.go(ctx, innerStatus.getSource());
+        UserPageActivity.go(ctx, source);
       }
     });
 
-    if (TextUtils.isEmpty(innerStatus.getMessage())) {
+    if (TextUtils.isEmpty(status.getMessage())) {
       textView.setVisibility(View.GONE);
     } else {
-      textView.setText(innerStatus.getMessage());
+      textView.setText(status.getMessage());
       textView.setVisibility(View.VISIBLE);
     }
-    if (TextUtils.isEmpty(innerStatus.getImageUrl()) == false) {
+    if (TextUtils.isEmpty(status.getImg()) == false) {
       imageView.setVisibility(View.VISIBLE);
-      ImageLoader.getInstance().displayImage(innerStatus.getImageUrl(),
+      ImageLoader.getInstance().displayImage(status.getImg(),
           imageView, ImageUtils.normalImageOptions);
       imageView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           Intent intent = new Intent(ctx, ImageBrowserActivity.class);
-          intent.putExtra("url", innerStatus.getImageUrl());
+          intent.putExtra("url", status.getImg());
           ctx.startActivity(intent);
         }
       });
@@ -119,7 +117,7 @@ public class TimeLineListAdapter extends BaseListAdapter<Status> {
       }
     });
 
-    timeView.setText(millisecs2DateString(innerStatus.getCreatedAt().getTime()));
+    timeView.setText(millisecs2DateString(status.getDate().getTime()));
     return conView;
   }
 

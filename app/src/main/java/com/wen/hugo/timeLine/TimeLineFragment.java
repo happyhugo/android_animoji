@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVStatus;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.followPage.FollowPageActivity;
@@ -19,7 +18,6 @@ import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.widget.ListView.BaseListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -115,32 +113,15 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         statusList.init(new BaseListView.DataInterface<Status>() {
             @Override
             public List<Status> getDatas(int skip, int limit, List<Status> currentDatas) throws Exception {
-                long maxId;
-                maxId = getMaxId(skip, currentDatas);
-                if (maxId == 0) {
-                    return new ArrayList<>();
-                } else {
-                    return mPresenter.getTimeline(maxId, limit);
-                }
+                return mPresenter.getTimeline(skip, limit);
             }
 
             @Override
             public void onItemSelected(final Status item){
-                StatusPageActivity.go(getContext(),item.getInnerStatus().getObjectId());
+                StatusPageActivity.go(getContext(),item.getStatus().getObjectId());
             }
 
         }, adapter);
-    }
-
-    private long getMaxId(int skip, List<Status> currentDatas) {
-        long maxId;
-        if (skip == 0) {
-            maxId = Long.MAX_VALUE;
-        } else {
-            AVStatus lastStatus = currentDatas.get(currentDatas.size() - 1).getInnerStatus();
-            maxId = lastStatus.getMessageId() - 1;
-        }
-        return maxId;
     }
 
     @Override

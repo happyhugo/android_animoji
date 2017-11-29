@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVStatus;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FollowCallback;
 import com.wen.hugo.R;
@@ -179,8 +178,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
             @Override
             public boolean onItemLongPressed(final Status item) {
-                AVStatus innerStatus = item.getInnerStatus();
-                AVUser source = innerStatus.getSource();
+                AVUser source = item.getUser();
                 if (source.getObjectId().equals(AVUser.getCurrentUser().getObjectId())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("要删除这条状态么?").setPositiveButton("ok", new DialogInterface.OnClickListener() {
@@ -196,7 +194,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
             @Override
             public void onItemSelected(final Status item){
-                StatusPageActivity.go(getContext(),item.getInnerStatus().getObjectId());
+                StatusPageActivity.go(getContext(),item.getStatus().getObjectId());
             }
 
         }, adapter);
