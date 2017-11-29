@@ -20,8 +20,10 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FollowCallback;
+import com.hyphenate.easeui.EaseConstant;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.util.ActivityUtils;
 import com.wen.hugo.widget.ListView.BaseListView;
@@ -71,6 +73,9 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     @BindView(R.id.followAction)
     Button followActionBtn;
+
+    @BindView(R.id.talkAction)
+    Button talkActionBtn;
 
     @BindView(R.id.followStatus)
     TextView followStatusView;
@@ -225,6 +230,13 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         }
     }
 
+    @OnClick(R.id.talkAction)
+    void talkAction(){
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(EaseConstant.EXTRA_USER_ID, user.getUsername());
+        startActivity(intent);
+    }
+
     public static void followAction(AVUser user, boolean follow, FollowCallback followCallback) {
         AVUser currentUser = AVUser.getCurrentUser();
         if (follow) {
@@ -279,10 +291,12 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
                         followStatusView.setVisibility(View.GONE);
                         followLayout.setVisibility(View.GONE);
                         followActionBtn.setVisibility(View.GONE);
+                        talkActionBtn.setVisibility(View.GONE);
                         return;
                     }
                     followStatusView.setVisibility(View.VISIBLE);
                     followActionBtn.setVisibility(View.VISIBLE);
+                    talkActionBtn.setVisibility(View.VISIBLE);
 
                     int followStatusDescId = R.string.status_none_follow_desc;
                     switch (followStatus) {

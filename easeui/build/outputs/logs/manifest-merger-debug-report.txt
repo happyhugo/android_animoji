@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml:1:1-4:12
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml:1:1-4:12
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml:1:1-4:12
+	package
+		ADDED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml:1:70-100
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml:1:11-69
+uses-sdk
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+		ADDED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+		ADDED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml
+		INJECTED from /Users/hugo/Downloads/36wen/easeui/src/main/AndroidManifest.xml

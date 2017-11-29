@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SignUpCallback;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.wen.hugo.R;
 import com.wen.hugo.timeLine.TimeLineActivity;
 
@@ -124,8 +126,8 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @OnClick(R.id.register)
     void register() {
-        String username = usernameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        final String username = usernameEditText.getText().toString();
+        final String password = passwordEditText.getText().toString();
         if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)) {
             AVUser user = new AVUser();
             user.setUsername(username);
@@ -133,8 +135,33 @@ public class LoginFragment extends Fragment implements LoginContract.View {
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(AVException e) {
-                    AVUser.logOut();
-                    Toast.makeText(getContext(),"successful",Toast.LENGTH_LONG).show();
+                    if(e==null) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    EMClient.getInstance().createAccount(username,password);
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            AVUser.logOut();
+                                            Toast.makeText(getContext(), "successful", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } catch (final HyphenateException e1) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            AVUser.logOut();
+                                            Toast.makeText(getContext(), "im register fail:"+e1.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }else{
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }

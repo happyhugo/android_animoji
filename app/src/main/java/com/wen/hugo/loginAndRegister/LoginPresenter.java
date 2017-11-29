@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.avos.avoscloud.AVException;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
@@ -63,6 +65,22 @@ public class LoginPresenter implements LoginContract.Presenter {
                         public void subscribe(ObservableEmitter<String> e) throws Exception {
                             try{
                                 mDataRepository.login(name,password);
+                                EMClient.getInstance().login(name, password, new EMCallBack() {
+
+                                            @Override
+                                            public void onSuccess() {
+                                            }
+
+                                            @Override
+                                            public void onProgress(int progress, String status) {
+
+                                            }
+
+                                            @Override
+                                            public void onError(int code, String error) {
+                                                  System.out.println("login fail");
+                                            }
+                                        });
                                 e.onNext("");
                             }catch(AVException exception){
                                 e.onNext(exception.getMessage());

@@ -39,5 +39,6 @@ dependencies {
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.1.0'
     implementation files('libs/prettytime-3.2.5.Final.jar')
+    implementation project(':easeui')
 }
 

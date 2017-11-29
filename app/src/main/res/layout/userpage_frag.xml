@@ -41,6 +41,10 @@
             android:text="关注" />
 
 
+        <Button
+            android:id="@+id/talkAction"
+            style="@style/status_menu"
+            android:text="私聊" />
     </LinearLayout>
 
 
