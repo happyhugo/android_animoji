@@ -18,6 +18,8 @@ public interface TimeLineContract {
         void showLoadingError(String reason);
 
         void refresh();
+
+        boolean isTimeLine();
     }
 
     interface Presenter extends BasePresenter {

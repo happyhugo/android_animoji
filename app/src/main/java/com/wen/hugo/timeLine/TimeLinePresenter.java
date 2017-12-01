@@ -127,6 +127,10 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
 
     @Override
     public List<Status> getTimeline(int skip, int limit) throws AVException {
-        return mDataRepository.getNewStatus(skip, limit);
+        if(mTimeLineView.isTimeLine()){
+            return mDataRepository.getTimeline(skip, limit);
+        }else{
+            return mDataRepository.getNewStatus(skip, limit);
+        }
     }
 }

@@ -19,7 +19,7 @@ import com.avos.avoscloud.SignUpCallback;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.wen.hugo.R;
-import com.wen.hugo.timeLine.TimeLineActivity;
+import com.wen.hugo.activity.MainActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,7 +112,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void succeed() {
-        Intent intent = new Intent(getContext(), TimeLineActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
         startActivity(intent);
         getActivity().finish();
     }

@@ -18,8 +18,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Created by hugo on 11/22/17.
  */

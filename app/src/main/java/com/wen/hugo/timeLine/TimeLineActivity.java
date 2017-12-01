@@ -18,9 +18,8 @@ public class TimeLineActivity extends AppCompatActivity {
 
     TimeLineFragment timeLineFragment =
             (TimeLineFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-
     if (timeLineFragment == null) {
-      timeLineFragment = TimeLineFragment.newInstance();
+      timeLineFragment = TimeLineFragment.newInstance(true);
 
       ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
               timeLineFragment, R.id.contentFrame);

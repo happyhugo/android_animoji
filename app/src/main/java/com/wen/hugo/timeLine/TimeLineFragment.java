@@ -3,7 +3,6 @@ package com.wen.hugo.timeLine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +33,20 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
 
     private TimeLineListAdapter adapter;
 
+    private boolean timeline;
+
     private static final int SEND_REQUEST = 2;
     @BindView(R.id.status_List)
     BaseListView<Status> statusList;
 
-    public static TimeLineFragment newInstance() {
-        return new TimeLineFragment();
+    public static TimeLineFragment newInstance(boolean timeline) {
+        TimeLineFragment t = new TimeLineFragment();
+        t.setTimeline(timeline);
+        return t;
+    }
+
+    public void setTimeline(boolean timeline) {
+        this.timeline = timeline;
     }
 
     @Override
@@ -64,23 +71,27 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.timeline_frag, container, false);
-        ButterKnife.bind(this,root);
+        ButterKnife.bind(this, root);
         setRetainInstance(true);
 
+        if(savedInstanceState==null) {
+            adapter = new TimeLineListAdapter(getActivity());
+            adapter.setPresenter(mPresenter);
+        }
         initList();
         statusList.setToastIfEmpty(false);
-        statusList.onRefresh();
+        if(savedInstanceState==null) {
+            statusList.onRefresh();
+        }
 
         return root;
     }
 
-    @OnClick(R.id.send)
-    void goSend() {
+    public void send(){
         Intent intent = new Intent(getActivity(), PublishStatusActivity.class);
         startActivityForResult(intent, SEND_REQUEST);
     }
@@ -108,8 +119,6 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     //logout 的 option 没有实现
 
     private void initList() {
-        adapter = new TimeLineListAdapter(getActivity());
-        adapter.setPresenter(mPresenter);
         statusList.init(new BaseListView.DataInterface<Status>() {
             @Override
             public List<Status> getDatas(int skip, int limit, List<Status> currentDatas) throws Exception {
@@ -132,5 +141,10 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     @Override
     public void refresh() {
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean isTimeLine() {
+        return timeline;
     }
 }

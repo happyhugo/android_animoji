@@ -117,11 +117,18 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         ButterKnife.bind(this,root);
         setRetainInstance(true);
 
-        init();
+        if(savedInstanceState==null) {
+            init();
+            adapter = new UserPageListAdapter(getActivity());
+            adapter.setPresenter(mPresenter);
+        }
         initList();
-        statusList.onRefresh();
-        refreshs();
 
+        //保存要保存的view变量  就是refreshs获得的变量
+        if(savedInstanceState==null) {
+            statusList.onRefresh();
+        }
+        refreshs();
         return root;
     }
 
@@ -165,7 +172,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         Intent intent = getActivity().getIntent();
         AVUser other = intent.getParcelableExtra(USER);
         AVUser currentUser = AVUser.getCurrentUser();
-        if(currentUser.equals(other)){
+        if( other==null || currentUser.equals(other)){
             myself = true;
             user = currentUser;
         }else{
@@ -174,8 +181,6 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
     }
 
     private void initList() {
-        adapter = new UserPageListAdapter(getActivity());
-        adapter.setPresenter(mPresenter);
         statusList.init(new BaseListView.DataInterface<Status>() {
             public List<Status> getDatas(int skip, int limit, List<Status> currentDatas) throws Exception {
                 return mPresenter.getUserStatusList(user, skip, limit);
