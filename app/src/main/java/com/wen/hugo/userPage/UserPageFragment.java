@@ -222,7 +222,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
                 @Override
                 public void done(AVObject object, AVException e) {
-                    if (ActivityUtils.filterException(getActivity(), e)) {
+                    if (ActivityUtils.filterException(getContext(), e)) {
                         refreshs();
                     }
                 }

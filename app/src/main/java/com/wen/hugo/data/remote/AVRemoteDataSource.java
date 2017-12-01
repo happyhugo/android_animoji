@@ -53,7 +53,7 @@ public class AVRemoteDataSource implements DataSource {
     @Override
     public List<Status> getNewStatus(int skip, int limit) throws AVException {
         AVQuery<AVObject> q = new AVQuery<>("_Status");
-//        q.include("_User");
+        q.include("source");
         q.include(DETAIL_ID);
         q.setLimit(limit);
         q.setSkip(skip);
@@ -64,11 +64,17 @@ public class AVRemoteDataSource implements DataSource {
             Status status = new Status();
             status.setStatus(avStatuses.get(i));
             status.setDetail(avStatuses.get(i).getAVObject(DETAIL_ID));
-            System.out.println("qqqq:"+ avStatuses.get(i));
-            status.setUser((AVUser) avStatuses.get(i).getAVObject("source"));
-            status.setDate((Date) avStatuses.get(i).get("createdAt"));
-            status.setImg((String)avStatuses.get(i).get("image"));
-            status.setMessage((String)avStatuses.get(i).get("message"));
+            if(avStatuses.get(i) instanceof AVStatus){
+                status.setUser(((AVStatus)avStatuses.get(i)).getSource() );
+                status.setMessage(((AVStatus)avStatuses.get(i)).getMessage());
+                status.setImg(((AVStatus)avStatuses.get(i)).getImageUrl());
+                status.setDate(((AVStatus)avStatuses.get(i)).getCreatedAt());
+            }else{
+                status.setUser((AVUser) avStatuses.get(i).getAVObject("source"));
+                status.setDate((Date) avStatuses.get(i).get("createdAt"));
+                status.setImg((String)avStatuses.get(i).get("image"));
+                status.setMessage((String)avStatuses.get(i).get("message"));
+            }
             statuses.add(status);   //包括两张表的对象
         }
         return statuses;
