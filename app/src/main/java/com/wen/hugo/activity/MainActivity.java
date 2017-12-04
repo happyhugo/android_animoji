@@ -14,8 +14,13 @@ import android.view.View;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.ashokvarma.bottomnavigation.TextBadgeItem;
+import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.wen.hugo.R;
 import com.wen.hugo.chatPage.ChatActivity;
@@ -46,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
     Adapter adapter;
 
+    TextBadgeItem numberBadgeItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             }
         });
 
+        numberBadgeItem = new TextBadgeItem()
+                .setBorderWidth(4)
+                .setBackgroundColorResource(android.R.color.holo_blue_bright);
+
         bottomNavigationBar.clearAll();
         bottomNavigationBar.setFab(fab);
         bottomNavigationBar.setTabSelectedListener(this);
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_home_white_24dp, "Home").setActiveColorResource(R.color.white))
                 .addItem(new BottomNavigationItem(R.drawable.ic_book_white_24dp, "Books").setActiveColorResource(R.color.white))
-                .addItem(new BottomNavigationItem(R.drawable.ic_music_note_white_24dp, "Music").setActiveColorResource(R.color.white))
+                .addItem(new BottomNavigationItem(R.drawable.ic_music_note_white_24dp, "Music").setActiveColorResource(R.color.white).setBadgeItem(numberBadgeItem))
 //                .addItem(new BottomNavigationItem(R.drawable.ic_tv_white_24dp, "Movies & TV").setActiveColorResource(R.color.brown))
                 .setFirstSelectedPosition(0)
                 .initialise();
@@ -116,6 +127,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setOffscreenPageLimit(2);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUnreadLabel();
+        EMClient.getInstance().chatManager().addMessageListener(messageListener);
+    }
+
+    @Override
+    protected void onStop() {
+        EMClient.getInstance().chatManager().removeMessageListener(messageListener);
+        super.onStop();
 
     }
 
@@ -174,6 +199,72 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         public int getCount() {
             return mFragments.size();
         }
+    }
+
+    EMMessageListener messageListener = new EMMessageListener() {
+
+        @Override
+        public void onMessageReceived(List<EMMessage> messages) {
+            // notify new message
+            for (EMMessage message : messages) {
+                EaseUI.getInstance().getNotifier().onNewMsg(message);
+            }
+            refreshUIWithMessage();
+        }
+
+        @Override
+        public void onCmdMessageReceived(List<EMMessage> messages) {
+        }
+
+        @Override
+        public void onMessageRead(List<EMMessage> messages) {
+        }
+
+        @Override
+        public void onMessageDelivered(List<EMMessage> message) {
+        }
+
+        @Override
+        public void onMessageRecalled(List<EMMessage> messages) {
+            refreshUIWithMessage();
+        }
+
+        @Override
+        public void onMessageChanged(EMMessage message, Object change) {}
+    };
+
+    private void refreshUIWithMessage() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                // refresh unread count
+                updateUnreadLabel();
+ //               if (viewPager.getCurrentItem() == 2) {
+                    // refresh conversation list
+                    if ((EaseConversationListFragment)adapter.getItem(2) != null) {
+                        ((EaseConversationListFragment)adapter.getItem(2)).refresh();
+ //                   }
+                }
+            }
+        });
+    }
+
+    /**
+     * update unread message count
+     */
+    public void updateUnreadLabel() {
+        int count = getUnreadMsgCountTotal();
+        if (count > 0) {
+            if (numberBadgeItem != null) {
+                numberBadgeItem.setText(String.valueOf(count));
+                numberBadgeItem.show(true);
+            }
+        }else {
+            numberBadgeItem.hide(true);
+        }
+    }
+
+    public int getUnreadMsgCountTotal() {
+        return EMClient.getInstance().chatManager().getUnreadMsgsCount();
     }
 }
 

@@ -4,5 +4,6 @@
 .idea
 .DS_Store
 /build
+/easeui/build
 /captures
 .externalNativeBuild
