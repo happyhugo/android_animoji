@@ -7,11 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FollowCallback;
+import com.bumptech.glide.Glide;
 import com.hyphenate.easeui.EaseConstant;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
@@ -117,12 +122,23 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         ButterKnife.bind(this,root);
         setRetainInstance(true);
 
+
         if(savedInstanceState==null) {
             init();
             adapter = new UserPageListAdapter(getActivity());
             adapter.setPresenter(mPresenter);
         }
         initList();
+
+        final Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) root.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(user.getUsername());
+        final ImageView imageView = (ImageView) root.findViewById(R.id.backdrop);
+        Glide.with(this).load(R.drawable.cheese_1).centerCrop().into(imageView);
 
         //保存要保存的view变量  就是refreshs获得的变量
         if(savedInstanceState==null) {

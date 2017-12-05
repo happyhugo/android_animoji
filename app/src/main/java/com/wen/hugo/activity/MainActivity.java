@@ -19,6 +19,7 @@ import android.view.View;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ashokvarma.bottomnavigation.TextBadgeItem;
+import com.avos.avoscloud.AVUser;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
@@ -29,10 +30,10 @@ import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.wen.hugo.R;
 import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
+import com.wen.hugo.subjectPage.SubjectPageFragment;
 import com.wen.hugo.timeLine.TimeLineFragment;
 import com.wen.hugo.timeLine.TimeLinePresenter;
-import com.wen.hugo.userPage.UserPageFragment;
-import com.wen.hugo.userPage.UserPagePresenter;
+import com.wen.hugo.userPage.UserPageActivity;
 import com.wen.hugo.util.schedulers.SchedulerProvider;
 
 import java.util.ArrayList;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    int currentMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,33 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 .addItem(new BottomNavigationItem(R.drawable.ic_music_note_white_24dp, "Music").setActiveColorResource(R.color.white).setBadgeItem(numberBadgeItem))
                 .setFirstSelectedPosition(0)
                 .initialise();
+
+
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                switch (currentMenuItem){
+                    case R.id.nav_home:
+                        UserPageActivity.go(MainActivity.this, AVUser.getCurrentUser());
+                        break;
+                }
+                currentMenuItem = 0;
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
     }
 
 
@@ -108,13 +138,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         adapter = new Adapter(getSupportFragmentManager());
 
         if(savedInstanceState==null) {
+
             TimeLineFragment timeLineFragment = TimeLineFragment.newInstance(false);
             new TimeLinePresenter(DataRepository.getInstance(), timeLineFragment, SchedulerProvider.getInstance());
             adapter.addFragment(timeLineFragment);
 
-            UserPageFragment userPageFragment = UserPageFragment.newInstance();
-            new UserPagePresenter(DataRepository.getInstance(), userPageFragment, SchedulerProvider.getInstance());
-            adapter.addFragment(userPageFragment);
+            adapter.addFragment(new SubjectPageFragment());
+
+//            UserPageFragment userPageFragment = UserPageFragment.newInstance();
+//            new UserPagePresenter(DataRepository.getInstance(), userPageFragment, SchedulerProvider.getInstance());
+//            adapter.addFragment(userPageFragment);
 
             EaseConversationListFragment conversationListFragment = new EaseConversationListFragment();
             adapter.addFragment(conversationListFragment);
@@ -146,8 +179,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
-                    menuItem.setChecked(true);
+                    menuItem.setChecked(false);
                     mDrawerLayout.closeDrawers();
+                    currentMenuItem = menuItem.getItemId();
                     return true;
                 }
             });

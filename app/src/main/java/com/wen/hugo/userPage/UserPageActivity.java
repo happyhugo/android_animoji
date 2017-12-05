@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.R;
@@ -18,10 +19,9 @@ public class UserPageActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.timeline_activity);
+    setContentView(R.layout.userpage_activity);
 
-    UserPageFragment userPageFragment =
-            (UserPageFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+    UserPageFragment userPageFragment = (UserPageFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
     if (userPageFragment == null) {
       userPageFragment = UserPageFragment.newInstance();
@@ -42,5 +42,15 @@ public class UserPageActivity extends AppCompatActivity {
     Intent intent = new Intent(context, UserPageActivity.class);
     intent.putExtra(UserPageFragment.USER, item);
     context.startActivity(intent);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        this.finish();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }
