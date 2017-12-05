@@ -36,6 +36,8 @@ dependencies {
     implementation 'com.squareup.sqlbrite2:sqlbrite:2.0.0'
     implementation 'com.jakewharton:butterknife:8.1.0'
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.3'
+    implementation 'com.github.fangx:haorefresh:1.0'
+    implementation 'com.wang.avi:library:1.0.1'
     // LeanCloud 基础包
     implementation 'cn.leancloud.android:avoscloud-sdk:v4.4.4'
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'

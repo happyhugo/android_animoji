@@ -1,6 +1,5 @@
 package com.wen.hugo.timeLine;
 
-import com.avos.avoscloud.AVException;
 import com.wen.hugo.base.BasePresenter;
 import com.wen.hugo.base.BaseView;
 import com.wen.hugo.bean.Status;
@@ -17,7 +16,7 @@ public interface TimeLineContract {
 
         void showLoadingError(String reason);
 
-        void refresh();
+        void refresh(boolean like,boolean refresh,boolean end);
 
         boolean isTimeLine();
     }
@@ -26,6 +25,8 @@ public interface TimeLineContract {
 
         void updateStatusLikes(Status status,List<String> likes);
 
-        List<Status> getTimeline(int skip, int limit)  throws AVException;
+        void getTimeline(boolean refresh);
+
+        List<Status> getData();
     }
 }

@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.data.DataSource;
+import com.wen.hugo.util.Constans;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
 
     private List<Status> mStatus;
 
+    private List<Status> data = new ArrayList<>();
+
+    private boolean end;
+
     public TimeLinePresenter(@NonNull DataSource dataRepository,
                              @NonNull TimeLineContract.View timeLineView,
                              @NonNull BaseSchedulerProvider schedulerProvider) {
@@ -49,7 +54,7 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
         mCompositeDisposable = new CompositeDisposable();
         mTimeLineView.setPresenter(this);
 
-        mStatus = new ArrayList<Status>();
+        mStatus = new ArrayList<>();
     }
 
     @Override
@@ -100,7 +105,7 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
                         status.setUpdateStatus(false);
                         mStatus.remove(status);
                         if (TextUtils.isEmpty(reason)) {
-                            mTimeLineView.refresh();
+                            mTimeLineView.refresh(true,false,false);
                         }else{
                             if (!contains) {
                                 likes.remove(userId);
@@ -126,11 +131,63 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     }
 
     @Override
-    public List<Status> getTimeline(int skip, int limit) throws AVException {
-        if(mTimeLineView.isTimeLine()){
-            return mDataRepository.getTimeline(skip, limit);
-        }else{
-            return mDataRepository.getNewStatus(skip, limit);
-        }
+    public void getTimeline(final boolean refresh){
+        mCompositeDisposable.add(
+                Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<String> e) throws Exception {
+                        try{
+                            List<Status> temp;
+                            if(mTimeLineView.isTimeLine()){
+                                if(refresh) {
+                                    temp = mDataRepository.getTimeline(0, Constans.ONE_PAGE_SIZE);
+                                    data.clear();
+                                    data.addAll(temp);
+                                }else{
+                                    temp = mDataRepository.getTimeline(data.size(), Constans.ONE_PAGE_SIZE);
+                                    data.addAll(temp);
+                                }
+                            }else{
+                                if(refresh) {
+                                    temp = mDataRepository.getNewStatus(0, Constans.ONE_PAGE_SIZE);
+                                    data.clear();
+                                    data.addAll(temp);
+                                }else{
+                                    temp = mDataRepository.getNewStatus(data.size(), Constans.ONE_PAGE_SIZE);
+                                    data.addAll(temp);
+                                }
+                            }
+                            if(temp.size()==0){
+                                end = true;
+                            }
+                            e.onNext("");
+                        }catch(AVException exception){
+                            e.onNext(exception.getMessage());
+                        }
+                    }
+                })
+                .subscribeOn(mSchedulerProvider.computation())
+                .observeOn(mSchedulerProvider.ui())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String reason) {
+                        if (!TextUtils.isEmpty(reason)) {
+                            mTimeLineView.showLoadingError(reason);
+                        }
+                        mTimeLineView.refresh(false,refresh,end);
+                        end = false;
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mTimeLineView.showLoadingError(throwable.getMessage());
+                    }
+                }));
+
+    }
+
+    @Override
+    public List<Status> getData() {
+        return data;
     }
 }

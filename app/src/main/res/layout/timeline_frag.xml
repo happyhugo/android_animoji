@@ -7,9 +7,14 @@
 
     <include layout="@layout/status_menu" />
 
-    <com.wen.hugo.widget.ListView.BaseListView
-        android:id="@+id/status_List"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <me.fangx.haorefresh.HaoRecyclerView
+            android:id="@+id/hao_recycleview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>
