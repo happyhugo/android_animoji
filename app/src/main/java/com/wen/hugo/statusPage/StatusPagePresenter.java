@@ -1,11 +1,10 @@
 package com.wen.hugo.statusPage;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
-import com.avos.avoscloud.AVException;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.data.DataSource;
+import com.wen.hugo.util.Constans;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
@@ -53,6 +52,7 @@ public class StatusPagePresenter implements StatusPageContract.Presenter {
 
     @Override
     public void unsubscribe() {
+        mStatusPageView.clear();
         mStatusPageView.setLoadingIndicator(false);
         mCompositeDisposable.clear();
     }
@@ -64,75 +64,84 @@ public class StatusPagePresenter implements StatusPageContract.Presenter {
                 Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
-                    try{
                         mDataRepository.deleteComment(comment);
                         e.onNext("");
-                    }catch(AVException exception){
-                        e.onNext(exception.getMessage());
-                    }
                     }
                 })
-                .subscribeOn(mSchedulerProvider.computation())
-                .observeOn(mSchedulerProvider.ui())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String reason) {
-                    mStatusPageView.setLoadingIndicator(false);
-                    if (TextUtils.isEmpty(reason)) {
-                        mStatusPageView.adapterChangeItem(comment,false);
-                        mStatusPageView.refresh();
-                    }else{
-                        mStatusPageView.showLoadingError(reason);
-                    }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                    mStatusPageView.setLoadingIndicator(false);
-                    mStatusPageView.showLoadingError(throwable.getMessage());
-                    }
-                }));
+                        .subscribeOn(mSchedulerProvider.computation())
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Consumer<String>() {
+                            @Override
+                            public void accept(String reason) {
+                                mStatusPageView.setLoadingIndicator(false);
+                                mStatusPageView.adapterChangeItem(comment, false);
+                                mStatusPageView.refresh(true, false, false, null);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                mStatusPageView.setLoadingIndicator(false);
+                                mStatusPageView.showLoadingError(throwable.getMessage());
+                            }
+                        }));
     }
 
     @Override
-    public void addComment(final String statusId,final Comment comment) {
+    public void addComment(final String statusId, final Comment comment) {
         mStatusPageView.setLoadingIndicator(true);
         mCompositeDisposable.add(
                 Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        try{
-                            mDataRepository.addComment(statusId,comment);
-                            e.onNext("");
-                        }catch(AVException exception){
-                            e.onNext(exception.getMessage());
-                        }
+                        mDataRepository.addComment(statusId, comment);
+                        e.onNext("");
                     }
                 })
-                .subscribeOn(mSchedulerProvider.computation())
-                .observeOn(mSchedulerProvider.ui())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String reason) {
-                        mStatusPageView.setLoadingIndicator(false);
-                        if (TextUtils.isEmpty(reason)) {
-                            mStatusPageView.adapterChangeItem(comment,true);
-                            mStatusPageView.refresh();
-                        }else{
-                            mStatusPageView.showLoadingError(reason);
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mStatusPageView.setLoadingIndicator(false);
-                        mStatusPageView.showLoadingError(throwable.getMessage());
-                    }
-                }));
+                        .subscribeOn(mSchedulerProvider.computation())
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Consumer<String>() {
+                            @Override
+                            public void accept(String reason) {
+                                mStatusPageView.setLoadingIndicator(false);
+                                mStatusPageView.adapterChangeItem(comment, true);
+                                mStatusPageView.refresh(true, false, false, null);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                mStatusPageView.setLoadingIndicator(false);
+                                mStatusPageView.showLoadingError(throwable.getMessage());
+                            }
+                        }));
     }
 
     @Override
-    public List<Comment> getComments(String statusId, int skip, int limit) throws AVException {
-        return mDataRepository.getComments(statusId, skip, limit);
+    public void getComments(final String statusId, final int skip) {
+        mCompositeDisposable.add(
+                Observable.create(new ObservableOnSubscribe<List<Comment>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<Comment>> e) throws Exception {
+                        e.onNext(mDataRepository.getComments(statusId, skip, Constans.ONE_COMMENT_PAGE_SIZE));
+                    }
+                })
+                        .subscribeOn(mSchedulerProvider.computation())
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Consumer<List<Comment>>() {
+                            @Override
+                            public void accept(List<Comment> data) {
+                                mStatusPageView.refresh(false, skip == 0, data.size() != Constans.ONE_COMMENT_PAGE_SIZE, data);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                mStatusPageView.showLoadingError(throwable.getMessage());
+                            }
+                        }));
+
+    }
+
+    @Override
+    public void replayComment(Comment item) {
+        mStatusPageView.replayComment(item);
     }
 }

@@ -5,9 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,9 +24,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Comment;
-import com.wen.hugo.widget.ListView.BaseListView;
 
 import java.util.List;
 
@@ -42,10 +46,15 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
 
     private StatusPageContract.Presenter mPresenter;
 
-    private StatusPageListAdapter adapter;
+    private StatusPageListAdapter mAdapter;
 
-    @BindView(R.id.comment_List)
-    BaseListView<Comment> commentList;
+    private View errorView;
+
+    @BindView(R.id.rv_list)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.swipeLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @BindView(R.id.et_comment)
     EditText mEtComment;
@@ -87,11 +96,8 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
         View root = inflater.inflate(R.layout.statuspage_frag, container, false);
         ButterKnife.bind(this,root);
         setRetainInstance(true);
-
         init();
-        commentList.setToastIfEmpty(false);
-        commentList.onRefresh();
-
+        refresh();
         return root;
     }
 
@@ -129,16 +135,34 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
               }
             }
         });
-        adapter = new StatusPageListAdapter(getActivity());
-        adapter.setPresenter(mPresenter);
-        commentList.init(new BaseListView.DataInterface<Comment>() {
+        mSwipeRefreshLayout.setColorSchemeColors(Color.rgb(47, 223, 189));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRecyclerView.getParent(), false);
+        errorView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public List<Comment> getDatas(int skip, int limit, List<Comment> currentDatas) throws Exception {
-                return mPresenter.getComments(statusId,skip,limit);
+            public void onClick(View v) {
+                refresh();
             }
+        });
+        initAdapter();
+        initRefreshLayout();
+    }
 
+
+    private void initAdapter() {
+        mAdapter = new StatusPageListAdapter(getActivity(),mPresenter);
+        mAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
-            public boolean onItemLongPressed(final Comment item) {
+            public void onLoadMoreRequested() {
+                loadMore();
+            }
+        });
+        mAdapter.openLoadAnimation();
+        mAdapter.setEmptyView(errorView);
+        mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                final Comment item = (Comment) adapter.getItem(position);
                 if (item.getFrom().equals(AVUser.getCurrentUser())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("要删除这条评论么?").setPositiveButton("ok", new DialogInterface.OnClickListener() {
@@ -151,24 +175,75 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
                 }
                 return true;
             }
+        });
+//        mAdapter.setPreLoadNumber(3);
+        mRecyclerView.setAdapter(mAdapter);
+    }
 
+    private void initRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onItemSelected(final Comment item){
-                if (item.getFrom().equals(AVUser.getCurrentUser())) {
-                    showLoadingError("不自己回复自己");
-//                  return;
-                }
-                if(mComment.getReplayTo()!=null&&!mComment.getReplayTo().equals(item.getFrom())){
-                    mEtComment.setText("");
-                }
-
-                mEtComment.setHint(String.format("回复 %s 的评论:", item.getFrom().getUsername()));
-                mEtComment.requestFocus();
-
-                inputMethodManager.showSoftInput(mEtComment, InputMethodManager.RESULT_UNCHANGED_SHOWN);
-                mComment.setReplayTo(item.getFrom());
+            public void onRefresh() {
+                refresh();
             }
-        }, adapter);
+        });
+    }
+
+    private void refresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        mAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
+        mPresenter.getComments(statusId,0);
+    }
+
+    private void loadMore() {
+        mSwipeRefreshLayout.setEnabled(false);
+        mPresenter.getComments(statusId, mAdapter.getData().size());
+    }
+
+    private void setData(boolean isRefresh, List data, boolean end) {
+        final int size = data == null ? 0 : data.size();
+        if (isRefresh) {
+            mAdapter.setNewData(data);
+        } else {
+            if (size > 0) {
+                mAdapter.addData(data);
+            }
+        }
+        if (end) {
+            //第一页如果不够一页就不显示没有更多数据布局
+            mAdapter.loadMoreEnd(isRefresh);
+        } else {
+            mAdapter.loadMoreComplete();
+        }
+    }
+
+    @Override
+    public void showLoadingError(String reason) {
+        clear();
+        Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void refresh(boolean like, boolean refresh, boolean end, List<Comment> data) {
+        if (like) {
+            mAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        setData(refresh, data, end);
+        if (refresh) {
+            mAdapter.setEnableLoadMore(true);
+            mSwipeRefreshLayout.setRefreshing(false);
+        } else {
+            mSwipeRefreshLayout.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void clear() {
+        mAdapter.setEnableLoadMore(true);
+        mSwipeRefreshLayout.setEnabled(true);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -193,25 +268,32 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
     }
 
     @Override
-    public void showLoadingError(String reason) {
-        Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void refresh() {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void adapterChangeItem(Comment comment, boolean add) {
         if(add){
-            adapter.getDatas().add(comment);
+            mAdapter.getData().add(comment);
             mEtComment.setText("");
             mEtComment.setHint("添加评论");
             mComment = new Comment();
         }else{
-            adapter.getDatas().remove(comment);
+            mAdapter.getData().remove(comment);
         }
+    }
+
+    @Override
+    public void replayComment(Comment item) {
+        if (item.getFrom().equals(AVUser.getCurrentUser())) {
+            showLoadingError("不自己回复自己");
+            return;
+        }
+        if (mComment.getReplayTo() != null && !mComment.getReplayTo().equals(item.getFrom())) {
+            mEtComment.setText("");
+        }
+
+        mEtComment.setHint(String.format("回复 %s 的评论:", item.getFrom().getUsername()));
+        mEtComment.requestFocus();
+
+        inputMethodManager.showSoftInput(mEtComment, InputMethodManager.RESULT_UNCHANGED_SHOWN);
+        mComment.setReplayTo(item.getFrom());
     }
 
     @Override
