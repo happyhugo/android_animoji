@@ -2,22 +2,19 @@ package com.wen.hugo.timeLine;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
 import com.wen.hugo.activity.ImageBrowserActivity;
 import com.wen.hugo.bean.Status;
-import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.userPage.UserPageActivity;
 import com.wen.hugo.util.ImageUtils;
 
@@ -29,55 +26,38 @@ import java.util.Date;
 import java.util.List;
 
 
-public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapter.ViewHolder> {
-
-    public List<Status> datas = null;
+public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder> {
 
     private Context ctx;
 
     private TimeLineContract.Presenter mPresenter;
 
-    public TimeLineListAdapter(Context ctx) {
+    public TimeLineListAdapter(Context ctx,TimeLineContract.Presenter presenter) {
+        super( R.layout.status_item, null);
         this.ctx = ctx;
-    }
-
-    public void setPresenter(@NonNull TimeLineContract.Presenter presenter) {
         mPresenter = presenter;
-        datas = mPresenter.getData();
-    }
-
-    //创建新View，被LayoutManager所调用
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.status_item, viewGroup, false);
-        ViewHolder vh = new ViewHolder(view);
-        return vh;
-    }
-
-    //获取数据的数量
-    @Override
-    public int getItemCount() {
-        return datas.size();
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
-        final Status status = datas.get(position);
+    protected void convert(BaseViewHolder helper,final Status status) {
         final AVUser source = status.getUser();
-        ImageUtils.displayAvatar(source, viewHolder.avatarView);
-        viewHolder.nameView.setText(source.getUsername());
+        ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
+        ImageUtils.displayAvatar(source, avatarView);
+        helper.setText(R.id.nameView,source.getUsername());
+        TextView statusText = ((TextView)helper.getView(R.id.statusText));
         if (TextUtils.isEmpty(status.getMessage())) {
-            viewHolder.textView.setVisibility(View.GONE);
+            statusText.setVisibility(View.GONE);
         } else {
-            viewHolder.textView.setText(status.getMessage());
-            viewHolder.textView.setVisibility(View.VISIBLE);
+            statusText.setText(status.getMessage());
+            statusText.setVisibility(View.VISIBLE);
         }
+        ImageView statusImage = ((ImageView)helper.getView(R.id.statusImage));
+
         if (TextUtils.isEmpty(status.getImg()) == false) {
-            viewHolder.imageView.setVisibility(View.VISIBLE);
+            statusImage.setVisibility(View.VISIBLE);
             ImageLoader.getInstance().displayImage(status.getImg(),
-                    viewHolder.imageView, ImageUtils.normalImageOptions);
-            viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+                    statusImage, ImageUtils.normalImageOptions);
+            statusImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(ctx, ImageBrowserActivity.class);
@@ -86,7 +66,7 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
                 }
             });
         } else {
-            viewHolder.imageView.setVisibility(View.GONE);
+            statusImage.setVisibility(View.GONE);
         }
         final AVObject detail = status.getDetail();
 
@@ -96,42 +76,37 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
         } else {
             likes = new ArrayList<String>();
         }
-
         int n = likes.size();
         if (n > 0) {
-            viewHolder.likeCountView.setText(n + "");
+            helper.setText(R.id.likeCount,n + "");
         } else {
-            viewHolder.likeCountView.setText("");
+            helper.setText(R.id.likeCount,"");
         }
 
         final AVUser user = AVUser.getCurrentUser();
         final String userId = user.getObjectId();
         final boolean contains = likes.contains(userId);
+        ImageView likeView = ((ImageView)helper.getView(R.id.likeView));
         if (contains) {
-            viewHolder.likeView.setImageResource(R.drawable.status_ic_player_liked);
+            likeView.setImageResource(R.drawable.status_ic_player_liked);
         } else {
-            viewHolder.likeView.setImageResource(R.drawable.ic_player_like);
+            likeView.setImageResource(R.drawable.ic_player_like);
         }
-        viewHolder.likeLayout.setOnClickListener(new View.OnClickListener() {
+
+        View likeLayout = ((View)helper.getView(R.id.likeLayout));
+        likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.updateStatusLikes(status, likes);
             }
         });
 
-        viewHolder.timeView.setText(millisecs2DateString(status.getDate().getTime()));
+        helper.setText(R.id.timeView,millisecs2DateString(status.getDate().getTime()));
 
-
-        viewHolder.avatarView.setOnClickListener(new View.OnClickListener() {
+        avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UserPageActivity.go(ctx, source);
-            }
-        });
-        viewHolder.myView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                StatusPageActivity.go(view.getContext(),status.getStatus().getObjectId());
             }
         });
     }
@@ -150,32 +125,6 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
             return s.replace(" ", "");
         } else {
             return getDate(new Date(timestamp));
-        }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameView;
-        public TextView textView;
-        public ImageView avatarView;
-        public ImageView imageView;
-        public ImageView likeView;
-        public TextView likeCountView;
-        public View likeLayout;
-        public TextView timeView;
-        public View myView;
-
-        public ViewHolder(View view) {
-            super(view);
-            myView = view;
-            nameView = view.findViewById(R.id.nameView);
-            textView = view.findViewById(R.id.statusText);
-            avatarView = view.findViewById(R.id.avatarView);
-            imageView = view.findViewById(R.id.statusImage);
-            likeView = view.findViewById(R.id.likeView);
-            likeCountView = view.findViewById(R.id.likeCount);
-            likeLayout = view.findViewById(R.id.likeLayout);
-            timeView = view.findViewById(R.id.timeView);
-
         }
     }
 }

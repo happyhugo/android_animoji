@@ -1,9 +1,7 @@
 package com.wen.hugo.timeLine;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
-import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.data.DataSource;
@@ -38,10 +36,6 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     private CompositeDisposable mCompositeDisposable;
 
     private List<Status> mStatus;
-
-    private List<Status> data = new ArrayList<>();
-
-    private boolean end;
 
     public TimeLinePresenter(@NonNull DataSource dataRepository,
                              @NonNull TimeLineContract.View timeLineView,
@@ -89,12 +83,8 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
                 Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        try{
-                            mDataRepository.updateStatusLikes(status, likes);
-                            e.onNext("");
-                        }catch(AVException exception){
-                            e.onNext(exception.getMessage());
-                        }
+                        mDataRepository.updateStatusLikes(status, likes);
+                        e.onNext("");
                     }
                 })
                 .subscribeOn(mSchedulerProvider.computation())
@@ -104,16 +94,7 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
                     public void accept(String reason) {
                         status.setUpdateStatus(false);
                         mStatus.remove(status);
-                        if (TextUtils.isEmpty(reason)) {
-                            mTimeLineView.refresh(true,false,false);
-                        }else{
-                            if (!contains) {
-                                likes.remove(userId);
-                            } else {
-                                likes.add(userId);
-                            }
-                            mTimeLineView.showLoadingError(reason);
-                        }
+                        mTimeLineView.refresh(true,false,false,null);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -131,51 +112,26 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     }
 
     @Override
-    public void getTimeline(final boolean refresh){
+    public void getTimeline(final int skip){
         mCompositeDisposable.add(
-                Observable.create(new ObservableOnSubscribe<String>() {
+                Observable.create(new ObservableOnSubscribe<List<Status>>() {
                     @Override
-                    public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        try{
+                    public void subscribe(ObservableEmitter<List<Status>> e) throws Exception {
                             List<Status> temp;
                             if(mTimeLineView.isTimeLine()){
-                                if(refresh) {
-                                    temp = mDataRepository.getTimeline(0, Constans.ONE_PAGE_SIZE);
-                                    data.clear();
-                                    data.addAll(temp);
-                                }else{
-                                    temp = mDataRepository.getTimeline(data.size(), Constans.ONE_PAGE_SIZE);
-                                    data.addAll(temp);
-                                }
-                            }else{
-                                if(refresh) {
-                                    temp = mDataRepository.getNewStatus(0, Constans.ONE_PAGE_SIZE);
-                                    data.clear();
-                                    data.addAll(temp);
-                                }else{
-                                    temp = mDataRepository.getNewStatus(data.size(), Constans.ONE_PAGE_SIZE);
-                                    data.addAll(temp);
-                                }
+                                temp = mDataRepository.getTimeline(skip, Constans.ONE_PAGE_SIZE);
+                            }else {
+                                temp = mDataRepository.getNewStatus(skip, Constans.ONE_PAGE_SIZE);
                             }
-                            if(temp.size()==0){
-                                end = true;
-                            }
-                            e.onNext("");
-                        }catch(AVException exception){
-                            e.onNext(exception.getMessage());
-                        }
+                            e.onNext(temp);
                     }
                 })
                 .subscribeOn(mSchedulerProvider.computation())
                 .observeOn(mSchedulerProvider.ui())
-                .subscribe(new Consumer<String>() {
+                .subscribe(new Consumer<List<Status>>() {
                     @Override
-                    public void accept(String reason) {
-                        if (!TextUtils.isEmpty(reason)) {
-                            mTimeLineView.showLoadingError(reason);
-                        }
-                        mTimeLineView.refresh(false,refresh,end);
-                        end = false;
+                    public void accept(List<Status> data) {
+                        mTimeLineView.refresh(false,skip==0,data.size()!=Constans.ONE_PAGE_SIZE,data);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -184,10 +140,5 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
                     }
                 }));
 
-    }
-
-    @Override
-    public List<Status> getData() {
-        return data;
     }
 }

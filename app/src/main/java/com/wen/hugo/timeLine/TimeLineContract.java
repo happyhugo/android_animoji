@@ -16,7 +16,7 @@ public interface TimeLineContract {
 
         void showLoadingError(String reason);
 
-        void refresh(boolean like,boolean refresh,boolean end);
+        void refresh(boolean like,boolean refresh,boolean end,List<Status> data);
 
         boolean isTimeLine();
     }
@@ -25,8 +25,6 @@ public interface TimeLineContract {
 
         void updateStatusLikes(Status status,List<String> likes);
 
-        void getTimeline(boolean refresh);
-
-        List<Status> getData();
+        void getTimeline(int skip);
     }
 }

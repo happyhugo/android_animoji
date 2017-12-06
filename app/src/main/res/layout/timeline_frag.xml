@@ -8,11 +8,11 @@
     <include layout="@layout/status_menu" />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
+        android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <me.fangx.haorefresh.HaoRecyclerView
-            android:id="@+id/hao_recycleview"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>

@@ -1,28 +1,32 @@
 package com.wen.hugo.timeLine;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.wen.hugo.R;
+import com.wen.hugo.bean.Status;
 import com.wen.hugo.followPage.FollowPageActivity;
 import com.wen.hugo.followPage.FollowPageFragment;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
-import com.wen.hugo.widget.ListView.ProgressView;
+import com.wen.hugo.statusPage.StatusPageActivity;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import me.fangx.haorefresh.HaoRecyclerView;
-import me.fangx.haorefresh.LoadMoreListener;
 
 /**
  * Created by hugo on 11/22/17.
@@ -32,17 +36,19 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
 
     private TimeLineContract.Presenter mPresenter;
 
-    private TimeLineListAdapter adapter;
+    private TimeLineListAdapter mAdapter;
 
     private boolean timeline;
 
     private static final int SEND_REQUEST = 2;
 
-    @BindView(R.id.hao_recycleview)
-    HaoRecyclerView recyclerView;
+    private View errorView;
 
-    @BindView(R.id.swiperefresh)
-    SwipeRefreshLayout swiperefresh;
+    @BindView(R.id.rv_list)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.swipeLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static TimeLineFragment newInstance(boolean timeline) {
         TimeLineFragment t = new TimeLineFragment();
@@ -84,12 +90,11 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         setRetainInstance(true);
 
         if(savedInstanceState==null) {
-            adapter = new TimeLineListAdapter(getActivity());
-            adapter.setPresenter(mPresenter);
+            mAdapter = new TimeLineListAdapter(getActivity(),mPresenter);
         }
         initList();
         if(savedInstanceState==null) {
-            mPresenter.getTimeline(true);
+            refresh();
         }
         return root;
     }
@@ -114,70 +119,105 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == SEND_REQUEST) {
-                mPresenter.getTimeline(true);
+                refresh();
             }
         }
     }
 
     //logout 的 option 没有实现
     private void initList() {
-        recyclerView.setAdapter(adapter);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.rgb(47, 223, 189));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRecyclerView.getParent(), false);
+        errorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
+        initAdapter();
+        initRefreshLayout();
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
 
-//        swiperefresh.setColorSchemeResources(R.color.textBlueDark, R.color.textBlueDark, R.color.textBlueDark,
-//                R.color.textBlueDark);
+    private void initAdapter() {
+        mAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                loadMore();
+            }
+        });
+        mAdapter.openLoadAnimation();
+        mAdapter.setEmptyView(errorView);
+//        mAdapter.setPreLoadNumber(3);
+        mRecyclerView.setAdapter(mAdapter);
 
-        swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(final BaseQuickAdapter adapter, final View view, final int position) {
+                StatusPageActivity.go(view.getContext(),((Status)adapter.getItem(position)).getStatus().getObjectId());
+            }
+        });
+    }
+
+    private void initRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.getTimeline(true);
+                refresh();
             }
         });
+    }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+    private void refresh() {
+        mAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
+        mPresenter.getTimeline(0);
+    }
 
-        //设置自定义加载中和到底了效果
-        ProgressView progressView = new ProgressView(getContext());
-        progressView.setIndicatorId(ProgressView.BallPulse);
-        progressView.setIndicatorColor(0xff69b3e0);
-        recyclerView.setFootLoadingView(progressView);
+    private void loadMore() {
+        mSwipeRefreshLayout.setEnabled(false);
+        mPresenter.getTimeline(mAdapter.getData().size());
+    }
 
-        TextView textView = new TextView(getContext());
-        textView.setText("已经到底啦~");
-        recyclerView.setFootEndView(textView);
-
-        recyclerView.setLoadMoreListener(new LoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                mPresenter.getTimeline(false);
+    private void setData(boolean isRefresh, List data,boolean end) {
+        final int size = data == null ? 0 : data.size();
+        if (isRefresh) {
+            mAdapter.setNewData(data);
+        } else {
+            if (size > 0) {
+                mAdapter.addData(data);
             }
-        });
+        }
+        if (end) {
+            //第一页如果不够一页就不显示没有更多数据布局
+            mAdapter.loadMoreEnd(isRefresh);
+        } else {
+            mAdapter.loadMoreComplete();
+        }
     }
 
     @Override
     public void showLoadingError(String reason) {
+        mAdapter.setEnableLoadMore(true);
+        mSwipeRefreshLayout.setEnabled(true);
+        mSwipeRefreshLayout.setRefreshing(false);
         Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void refresh(boolean like,boolean refresh,boolean end) {
+    public void refresh(boolean like,boolean refresh,boolean end,List<Status> data) {
         if(like){
-            adapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
             return;
         }
-        if(refresh) {
-            recyclerView.refreshComplete();
-            recyclerView.loadMoreComplete();
-            swiperefresh.setRefreshing(false);
+
+        setData(refresh,data,end);
+        if(refresh){
+            mAdapter.setEnableLoadMore(true);
+            mSwipeRefreshLayout.setRefreshing(false);
         }else{
-            if (end) {
-                recyclerView.loadMoreEnd();
-            } else {
-                recyclerView.loadMoreComplete();
-            }
+            mSwipeRefreshLayout.setEnabled(true);
         }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
