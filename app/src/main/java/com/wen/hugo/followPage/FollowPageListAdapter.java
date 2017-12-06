@@ -1,37 +1,25 @@
 package com.wen.hugo.followPage;
 
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.avos.avoscloud.AVUser;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.wen.hugo.R;
 import com.wen.hugo.util.ImageUtils;
-import com.wen.hugo.widget.ListView.BaseListAdapter;
 
 
-public class FollowPageListAdapter extends BaseListAdapter<AVUser> {
+public class FollowPageListAdapter extends BaseQuickAdapter<AVUser, BaseViewHolder> {
 
-  public FollowPageListAdapter(Context ctx) {
-    super(ctx);
-  }
-
-  @Override
-  public View getView(int position, View conView, ViewGroup parent) {
-    if (conView == null) {
-      LayoutInflater inflater = LayoutInflater.from(ctx);
-      conView = inflater.inflate(R.layout.follow_item, null, false);
+    public FollowPageListAdapter() {
+        super(R.layout.follow_item, null);
     }
-    ImageView avatarView = findViewById(conView, R.id.avatarView);
-    TextView nameView = findViewById(conView, R.id.nameView);
 
-    AVUser user = datas.get(position);
-    ImageUtils.displayAvatar(user, avatarView);
-    nameView.setText(user.getUsername());
-    return conView;
-  }
+    @Override
+    protected void convert(BaseViewHolder helper, AVUser item) {
+        ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
+        ImageUtils.displayAvatar(item, avatarView);
+        helper.setText(R.id.nameView,item.getUsername());
+    }
 }
