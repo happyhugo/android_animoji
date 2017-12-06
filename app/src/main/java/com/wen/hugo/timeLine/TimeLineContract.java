@@ -19,6 +19,8 @@ public interface TimeLineContract {
         void refresh(boolean like,boolean refresh,boolean end,List<Status> data);
 
         boolean isTimeLine();
+
+        void clear();
     }
 
     interface Presenter extends BasePresenter {

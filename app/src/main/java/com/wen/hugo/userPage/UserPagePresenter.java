@@ -1,12 +1,11 @@
 package com.wen.hugo.userPage;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
-import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.data.DataSource;
+import com.wen.hugo.util.Constans;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class UserPagePresenter implements UserPageContract.Presenter {
         mCompositeDisposable = new CompositeDisposable();
         mUserPageView.setPresenter(this);
 
-        mStatus = new ArrayList<Status>();
+        mStatus = new ArrayList<>();
     }
 
     @Override
@@ -59,6 +58,7 @@ public class UserPagePresenter implements UserPageContract.Presenter {
     @Override
     public void unsubscribe() {
         mUserPageView.setLoadingIndicator(false);
+        mUserPageView.clear();
         for(Status status:mStatus){
             status.setUpdateStatus(false);
         }
@@ -82,15 +82,11 @@ public class UserPagePresenter implements UserPageContract.Presenter {
             likes.add(userId);
         }
         mCompositeDisposable.add(
-                Observable.create(new ObservableOnSubscribe<String>() {
+            Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        try{
-                            mDataRepository.updateStatusLikes(status, likes);
-                            e.onNext("");
-                        }catch(AVException exception){
-                            e.onNext(exception.getMessage());
-                        }
+                        mDataRepository.updateStatusLikes(status, likes);
+                        e.onNext("");
                     }
                 })
                 .subscribeOn(mSchedulerProvider.computation())
@@ -100,16 +96,7 @@ public class UserPagePresenter implements UserPageContract.Presenter {
                     public void accept(String reason) {
                         status.setUpdateStatus(false);
                         mStatus.remove(status);
-                        if (TextUtils.isEmpty(reason)) {
-                            mUserPageView.refresh();
-                        }else{
-                            if (!contains) {
-                                likes.remove(userId);
-                            } else {
-                                likes.add(userId);
-                            }
-                            mUserPageView.showLoadingError(reason);
-                        }
+                        mUserPageView.refresh(true,false,false,null);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -127,8 +114,28 @@ public class UserPagePresenter implements UserPageContract.Presenter {
     }
 
     @Override
-    public List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException {
-        return mDataRepository.getUserStatusList(user, skip, limit);
+    public void getUserStatusList(final AVUser avUser,final int skip){
+        mCompositeDisposable.add(
+                Observable.create(new ObservableOnSubscribe<List<Status>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<Status>> e) throws Exception {
+                        e.onNext(mDataRepository.getUserStatusList(avUser,skip,Constans.ONE_PAGE_SIZE));
+                    }
+                })
+                .subscribeOn(mSchedulerProvider.computation())
+                .observeOn(mSchedulerProvider.ui())
+                .subscribe(new Consumer<List<Status>>() {
+                    @Override
+                    public void accept(List<Status> data) {
+                        mUserPageView.refresh(false,skip==0,data.size()!=Constans.ONE_PAGE_SIZE,data);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mUserPageView.showLoadingError(throwable.getMessage());
+                    }
+                }));
+
     }
 
     @Override
@@ -138,12 +145,8 @@ public class UserPagePresenter implements UserPageContract.Presenter {
                 Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(ObservableEmitter<String> e) throws Exception {
-                        try{
-                            mDataRepository.deleteStatus(status);
-                            e.onNext("");
-                        }catch(AVException exception){
-                            e.onNext(exception.getMessage());
-                        }
+                        mDataRepository.deleteStatus(status);
+                        e.onNext("");
                     }
                 })
                 .subscribeOn(mSchedulerProvider.computation())
@@ -152,12 +155,8 @@ public class UserPagePresenter implements UserPageContract.Presenter {
                     @Override
                     public void accept(String reason) {
                         mUserPageView.setLoadingIndicator(false);
-                        if (TextUtils.isEmpty(reason)) {
-                            mUserPageView.adapterRemoveItem(status);
-                            mUserPageView.refresh();
-                        }else{
-                            mUserPageView.showLoadingError(reason);
-                        }
+                        mUserPageView.adapterRemoveItem(status);
+                        mUserPageView.refresh(true,false,false,null);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

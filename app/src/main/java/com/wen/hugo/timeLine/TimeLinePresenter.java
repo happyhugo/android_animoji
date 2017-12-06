@@ -58,6 +58,7 @@ public class TimeLinePresenter implements TimeLineContract.Presenter {
     @Override
     public void unsubscribe() {
 //      mTimeLineView.setLoadingIndicator(false);
+        mTimeLineView.clear();
         for(Status status:mStatus){
             status.setUpdateStatus(false);
         }

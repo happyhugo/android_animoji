@@ -14,13 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.followPage.FollowPageActivity;
 import com.wen.hugo.followPage.FollowPageFragment;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
-import com.wen.hugo.statusPage.StatusPageActivity;
 
 import java.util.List;
 
@@ -137,7 +135,6 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         });
         initAdapter();
         initRefreshLayout();
-        mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private void initAdapter() {
@@ -151,13 +148,6 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
         mAdapter.setEmptyView(errorView);
 //        mAdapter.setPreLoadNumber(3);
         mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(final BaseQuickAdapter adapter, final View view, final int position) {
-                StatusPageActivity.go(view.getContext(),((Status)adapter.getItem(position)).getStatus().getObjectId());
-            }
-        });
     }
 
     private void initRefreshLayout() {
@@ -170,6 +160,7 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     }
 
     private void refresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
         mAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
         mPresenter.getTimeline(0);
     }
@@ -198,9 +189,7 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
 
     @Override
     public void showLoadingError(String reason) {
-        mAdapter.setEnableLoadMore(true);
-        mSwipeRefreshLayout.setEnabled(true);
-        mSwipeRefreshLayout.setRefreshing(false);
+        clear();
         Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
     }
 
@@ -223,5 +212,12 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     @Override
     public boolean isTimeLine() {
         return timeline;
+    }
+
+    @Override
+    public void clear() {
+        mAdapter.setEnableLoadMore(true);
+        mSwipeRefreshLayout.setEnabled(true);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

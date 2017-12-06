@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
 import com.wen.hugo.activity.ImageBrowserActivity;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.userPage.UserPageActivity;
 import com.wen.hugo.util.ImageUtils;
 
@@ -107,6 +108,12 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
             @Override
             public void onClick(View v) {
                 UserPageActivity.go(ctx, source);
+            }
+        });
+        helper.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                StatusPageActivity.go(view.getContext(),status.getStatus().getObjectId());
             }
         });
     }

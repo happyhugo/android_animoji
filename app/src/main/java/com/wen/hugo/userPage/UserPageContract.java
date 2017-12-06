@@ -1,6 +1,5 @@
 package com.wen.hugo.userPage;
 
-import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.base.BasePresenter;
 import com.wen.hugo.base.BaseView;
@@ -20,17 +19,18 @@ public interface UserPageContract {
 
         void showLoadingError(String reason);
 
-        void refresh();
+        void refresh(boolean like,boolean refresh,boolean end,List<Status> data);
 
         void adapterRemoveItem(Status status);
 
+        void clear();
     }
 
     interface Presenter extends BasePresenter {
 
         void updateStatusLikes(Status status,List<String> likes);
 
-        List<Status> getUserStatusList(AVUser user, int skip, int limit) throws AVException;
+        void getUserStatusList(AVUser avUser,int skip);
 
         void deleteStatus(Status status);
 

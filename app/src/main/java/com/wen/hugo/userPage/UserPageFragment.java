@@ -1,15 +1,19 @@
 package com.wen.hugo.userPage;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +29,12 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FollowCallback;
 import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hyphenate.easeui.EaseConstant;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.chatPage.ChatActivity;
-import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.util.ActivityUtils;
-import com.wen.hugo.widget.ListView.BaseListView;
 import com.wen.hugo.widget.ListView.StatusNetAsyncTask;
 
 import java.util.List;
@@ -71,10 +74,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     private UserPageContract.Presenter mPresenter;
 
-    private UserPageListAdapter adapter;
-
-    @BindView(R.id.status_List)
-    BaseListView<Status> statusList;
+    private UserPageListAdapter mAdapter;
 
     @BindView(R.id.followAction)
     Button followActionBtn;
@@ -87,6 +87,14 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     @BindView(R.id.followLayout)
     View followLayout;
+
+    private View errorView;
+
+    @BindView(R.id.rv_list)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.swipeLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static UserPageFragment newInstance() {
         return new UserPageFragment();
@@ -119,31 +127,30 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.userpage_frag, container, false);
-        ButterKnife.bind(this,root);
+        ButterKnife.bind(this, root);
         setRetainInstance(true);
 
 
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             init();
-            adapter = new UserPageListAdapter(getActivity());
-            adapter.setPresenter(mPresenter);
+            mAdapter = new UserPageListAdapter(getActivity(), mPresenter);
         }
         initList();
 
         final Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) root.findViewById(R.id.collapsing_toolbar);
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) root.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(user.getUsername());
         final ImageView imageView = (ImageView) root.findViewById(R.id.backdrop);
         Glide.with(this).load(R.drawable.cheese_1).centerCrop().into(imageView);
 
         //保存要保存的view变量  就是refreshs获得的变量
-        if(savedInstanceState==null) {
-            statusList.onRefresh();
+        if (savedInstanceState == null) {
+            refresh();
         }
+
         refreshs();
         return root;
     }
@@ -155,55 +162,81 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         }
 
         if (mProgressDialog == null) {
-            if(!active){
+            if (!active) {
                 return;
             }
             mProgressDialog = ProgressDialog.show(getContext(), "标题", "加载中，请稍后……");
             mProgressDialog.setMessage("waiting....");
             mProgressDialog.setCancelable(false);
         }
-        if(active) {
+        if (active) {
             mProgressDialog.show();
-        }else{
+        } else {
             mProgressDialog.dismiss();
         }
     }
 
     @Override
-    public void showLoadingError(String reason) {
-        Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void refresh() {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void adapterRemoveItem(Status status) {
-        adapter.getDatas().remove(status);
+        mAdapter.getData().remove(status);
     }
 
     private void init() {
         Intent intent = getActivity().getIntent();
         AVUser other = intent.getParcelableExtra(USER);
         AVUser currentUser = AVUser.getCurrentUser();
-        if( other==null || currentUser.equals(other)){
+        if (other == null || currentUser.equals(other)) {
             myself = true;
             user = currentUser;
-        }else{
+        } else {
             user = other;
         }
     }
 
     private void initList() {
-        statusList.init(new BaseListView.DataInterface<Status>() {
-            public List<Status> getDatas(int skip, int limit, List<Status> currentDatas) throws Exception {
-                return mPresenter.getUserStatusList(user, skip, limit);
-            }
-
+        mSwipeRefreshLayout.setColorSchemeColors(Color.rgb(47, 223, 189));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRecyclerView.getParent(), false);
+        errorView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onItemLongPressed(final Status item) {
+            public void onClick(View v) {
+                refresh();
+            }
+        });
+        initAdapter();
+        initRefreshLayout();
+
+
+//        @Override
+//        public boolean onItemLongPressed(final Status item) {
+//            AVUser source = item.getUser();
+//            if (source.getObjectId().equals(AVUser.getCurrentUser().getObjectId())) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setMessage("要删除这条状态么?").setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mPresenter.deleteStatus(item);
+//                    }
+//                }).setNegativeButton("取消", null);
+//                builder.show();
+//            }
+//            return true;
+//        }
+    }
+
+    private void initAdapter() {
+        mAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                loadMore();
+            }
+        });
+        mAdapter.openLoadAnimation();
+        mAdapter.setEmptyView(errorView);
+        mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                final Status item = (Status)adapter.getItem(position);
                 AVUser source = item.getUser();
                 if (source.getObjectId().equals(AVUser.getCurrentUser().getObjectId())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -217,14 +250,75 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
                 }
                 return true;
             }
+        });
+//        mAdapter.setPreLoadNumber(3);
+        mRecyclerView.setAdapter(mAdapter);
+    }
 
+    private void initRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onItemSelected(final Status item){
-                StatusPageActivity.go(getContext(),item.getStatus().getObjectId());
+            public void onRefresh() {
+                refresh();
             }
+        });
+    }
 
-        }, adapter);
-        statusList.setToastIfEmpty(false);
+    private void refresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        mAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
+        mPresenter.getUserStatusList(user, 0);
+    }
+
+    private void loadMore() {
+        mSwipeRefreshLayout.setEnabled(false);
+        mPresenter.getUserStatusList(user, mAdapter.getData().size());
+    }
+
+    private void setData(boolean isRefresh, List data, boolean end) {
+        final int size = data == null ? 0 : data.size();
+        if (isRefresh) {
+            mAdapter.setNewData(data);
+        } else {
+            if (size > 0) {
+                mAdapter.addData(data);
+            }
+        }
+        if (end) {
+            //第一页如果不够一页就不显示没有更多数据布局
+            mAdapter.loadMoreEnd(isRefresh);
+        } else {
+            mAdapter.loadMoreComplete();
+        }
+    }
+
+    @Override
+    public void showLoadingError(String reason) {
+        clear();
+        Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void refresh(boolean like, boolean refresh, boolean end, List<Status> data) {
+        if (like) {
+            mAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        setData(refresh, data, end);
+        if (refresh) {
+            mAdapter.setEnableLoadMore(true);
+            mSwipeRefreshLayout.setRefreshing(false);
+        } else {
+            mSwipeRefreshLayout.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void clear() {
+        mAdapter.setEnableLoadMore(true);
+        mSwipeRefreshLayout.setEnabled(true);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @OnClick(R.id.followAction)
@@ -252,7 +346,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
     }
 
     @OnClick(R.id.talkAction)
-    void talkAction(){
+    void talkAction() {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(EaseConstant.EXTRA_USER_ID, user.getUsername());
         startActivity(intent);
