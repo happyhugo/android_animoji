@@ -16,15 +16,12 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
-import com.wen.hugo.followPage.FollowPageActivity;
-import com.wen.hugo.followPage.FollowPageFragment;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by hugo on 11/22/17.
@@ -38,7 +35,7 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
 
     private boolean timeline;
 
-    private static final int SEND_REQUEST = 2;
+    public static final int SEND_REQUEST = 2;
 
     private View errorView;
 
@@ -100,16 +97,6 @@ public class TimeLineFragment extends Fragment implements TimeLineContract.View 
     public void send(){
         Intent intent = new Intent(getActivity(), PublishStatusActivity.class);
         startActivityForResult(intent, SEND_REQUEST);
-    }
-
-    @OnClick(R.id.followers)
-    void goFollowers() {
-        FollowPageActivity.goFollow(getContext(),FollowPageFragment.TYPE_FOLLOWER);
-    }
-
-    @OnClick(R.id.following)
-    void goFollowing() {
-        FollowPageActivity.goFollow(getContext(),FollowPageFragment.TYPE_FOLLOWING);
     }
 
     @Override

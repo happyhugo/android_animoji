@@ -30,6 +30,9 @@ import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.wen.hugo.R;
 import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
+import com.wen.hugo.followPage.FollowPageActivity;
+import com.wen.hugo.followPage.FollowPageFragment;
+import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.subjectPage.SubjectPageFragment;
 import com.wen.hugo.timeLine.TimeLineFragment;
 import com.wen.hugo.timeLine.TimeLinePresenter;
@@ -122,6 +125,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 switch (currentMenuItem){
                     case R.id.nav_home:
                         UserPageActivity.go(MainActivity.this, AVUser.getCurrentUser());
+                        break;
+                    case R.id.nav_messages:
+                        FollowPageActivity.goFollow(MainActivity.this, FollowPageFragment.TYPE_FOLLOWER);
+                        break;
+                    case R.id.nav_friends:
+                        FollowPageActivity.goFollow(MainActivity.this, FollowPageFragment.TYPE_FOLLOWING);
+                        break;
+                    case R.id.nav_discussion:
+                        Intent intent = new Intent(MainActivity.this, PublishStatusActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 currentMenuItem = 0;
