@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+
+repositories {
+    jcenter()
+}
+
+repositories {
+    flatDir {
+        dirs '../ui/libs'
+    }
+}
+
+android {
+    compileSdkVersion 26
+
+    defaultConfig {
+        minSdkVersion 15 // ICE_CREAM_SANDWICH
+        targetSdkVersion 26
+        versionCode 18
+        versionName "x.y.z"
+
+        externalNativeBuild {
+            ndkBuild {
+                arguments "NDK_APPLICATION_MK:=src/main/cpp/Application.mk"
+            }
+        }
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86" // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/libs']
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/cpp/Android.mk'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile project(':ui')
+}

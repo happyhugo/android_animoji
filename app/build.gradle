@@ -1,10 +1,16 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    flatDir {
+        dirs '../ui/libs'
+    }
+}
+
 android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.wen.hugo"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -43,5 +49,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.1.0'
     implementation files('libs/prettytime-3.2.5.Final.jar')
     implementation project(':easeui')
+    implementation project(':videocall')
 }
 
