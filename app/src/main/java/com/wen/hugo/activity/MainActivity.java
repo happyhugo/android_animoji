@@ -36,6 +36,7 @@ import com.wen.hugo.mySubject.MySubjectActivity;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.publishSubject.PublishSubjectActivity;
 import com.wen.hugo.subjectPage.SubjectPageFragment;
+import com.wen.hugo.subjectPage.SubjectPagePresenter;
 import com.wen.hugo.timeLine.TimeLineFragment;
 import com.wen.hugo.timeLine.TimeLinePresenter;
 import com.wen.hugo.userPage.UserPageActivity;
@@ -165,7 +166,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             new TimeLinePresenter(DataRepository.getInstance(), timeLineFragment, SchedulerProvider.getInstance());
             adapter.addFragment(timeLineFragment);
 
-            adapter.addFragment(new SubjectPageFragment());
+
+            SubjectPageFragment subjectPageFragment = SubjectPageFragment.newInstance();
+            new SubjectPagePresenter(DataRepository.getInstance(), subjectPageFragment, SchedulerProvider.getInstance());
+            adapter.addFragment(subjectPageFragment);
 
 //            UserPageFragment userPageFragment = UserPageFragment.newInstance();
 //            new UserPagePresenter(DataRepository.getInstance(), userPageFragment, SchedulerProvider.getInstance());

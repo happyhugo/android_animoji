@@ -56,6 +56,11 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
+    public List<Subject> getAllSubjects(int skip, int limit) throws AVException {
+        return null;
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }

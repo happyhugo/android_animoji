@@ -187,6 +187,26 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
+    public List<Subject> getAllSubjects(int skip, int limit) throws AVException {
+        AVQuery<AVObject> query = new AVQuery<>(Subject.SUBJECT);
+        query.setSkip(skip);
+        query.setLimit(limit);
+        query.orderByAscending(CREATED_AT);
+        List<AVObject> avSubjects = query.find();
+        List<Subject> subjects = new ArrayList<>();
+        for(int i=0;i<avSubjects.size();i++){
+            Subject subject = new Subject();
+            subject.setUsername((String)avSubjects.get(i).get(Subject.USERNAME));
+            subject.setTitle((String)avSubjects.get(i).get(Subject.TITLE));
+            subject.setContent(avSubjects.get(i).getList(Subject.CONTENT));
+            subject.setFrom(AVUser.getCurrentUser());
+            subject.setObjectId(avSubjects.get(i).getObjectId());
+            subjects.add(subject);
+        }
+        return subjects;
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }

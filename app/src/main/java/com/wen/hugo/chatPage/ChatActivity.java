@@ -19,7 +19,7 @@ public class ChatActivity extends EaseBaseActivity{
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_chats);
         //user or group id
         toChatUsername = getIntent().getExtras().getString(EaseConstant.EXTRA_USER_ID);
         chatFragment = new EaseChatFragment();

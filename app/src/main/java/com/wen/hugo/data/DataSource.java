@@ -35,6 +35,8 @@ public interface DataSource {
 
     List<Subject> getSubjects(int skip,int limit) throws AVException;
 
+    List<Subject> getAllSubjects(int skip,int limit) throws AVException;
+
     boolean getRelationship(User user,boolean isFollower);
 
     Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap);

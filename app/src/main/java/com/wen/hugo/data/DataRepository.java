@@ -81,6 +81,11 @@ public class DataRepository implements DataSource{
     }
 
     @Override
+    public List<Subject> getAllSubjects(int skip, int limit) throws AVException {
+        return mAVRemoteDataSource.getAllSubjects(skip, limit);
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }
