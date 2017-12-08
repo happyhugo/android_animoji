@@ -32,6 +32,7 @@ import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
 import com.wen.hugo.followPage.FollowPageActivity;
 import com.wen.hugo.followPage.FollowPageFragment;
+import com.wen.hugo.mySubject.MySubjectActivity;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.publishSubject.PublishSubjectActivity;
 import com.wen.hugo.subjectPage.SubjectPageFragment;
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                         startActivity(subject);
                         break;
                     case R.id.my_subject:
+                        MySubjectActivity.go(MainActivity.this);
                         break;
                 }
                 currentMenuItem = 0;

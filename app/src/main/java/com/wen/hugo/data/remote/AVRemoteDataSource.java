@@ -166,6 +166,27 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
+    public List<Subject> getSubjects(int skip, int limit) throws AVException {
+        AVQuery<AVObject> query = new AVQuery<>(Subject.SUBJECT);
+        query.whereEqualTo(Subject.FROM, AVUser.getCurrentUser());
+        query.setSkip(skip);
+        query.setLimit(limit);
+        query.orderByAscending("createdAt");
+        List<AVObject> avSubjects = query.find();
+        List<Subject> subjects = new ArrayList<>();
+        for(int i=0;i<avSubjects.size();i++){
+            Subject subject = new Subject();
+            subject.setUsername((String)avSubjects.get(i).get(Subject.USERNAME));
+            subject.setTitle((String)avSubjects.get(i).get(Subject.TITLE));
+            subject.setContent(avSubjects.get(i).getList(Subject.CONTENT));
+            subject.setFrom(AVUser.getCurrentUser());
+            subject.setObjectId(avSubjects.get(i).getObjectId());
+            subjects.add(subject);
+        }
+        return subjects;
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }
@@ -231,6 +252,8 @@ public class AVRemoteDataSource implements DataSource {
         subjects.save();
     }
 
+
+
     @Override
     public String addUploadFile(@NonNull Bitmap bitmap) throws AVException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -265,6 +288,12 @@ public class AVRemoteDataSource implements DataSource {
     public void deleteComment(Comment comment)throws AVException{
         AVObject comments = comment.getComment();
         comments.delete();
+    }
+
+    @Override
+    public void deleteSubject(Subject subject) throws AVException {
+        AVObject avObject = AVObject.createWithoutData(Subject.SUBJECT,subject.getObjectId());
+        avObject.delete();
     }
 
     @Override

@@ -33,6 +33,8 @@ public interface DataSource {
 
     List<Comment> getComments(String statusId,int skip,int limit) throws AVException;
 
+    List<Subject> getSubjects(int skip,int limit) throws AVException;
+
     boolean getRelationship(User user,boolean isFollower);
 
     Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap);
@@ -50,6 +52,8 @@ public interface DataSource {
     void deleteStatus(Status status) throws AVException;
 
     void deleteComment(Comment comment) throws AVException;
+
+    void deleteSubject(Subject subject) throws AVException;
 
     void deleteFile(String url);
 

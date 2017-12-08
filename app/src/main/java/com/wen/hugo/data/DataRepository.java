@@ -76,6 +76,11 @@ public class DataRepository implements DataSource{
     }
 
     @Override
+    public List<Subject> getSubjects(int skip, int limit) throws AVException {
+        return mAVRemoteDataSource.getSubjects(skip,limit);
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }
@@ -118,6 +123,11 @@ public class DataRepository implements DataSource{
     @Override
     public void deleteComment(Comment comment) throws AVException{
         mAVRemoteDataSource.deleteComment(comment);
+    }
+
+    @Override
+    public void deleteSubject(Subject subject) throws AVException {
+        mAVRemoteDataSource.deleteSubject(subject);
     }
 
     @Override

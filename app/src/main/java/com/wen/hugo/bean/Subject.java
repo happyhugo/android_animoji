@@ -19,6 +19,15 @@ public class Subject {
     private String title;
     private List<String> content;
     private AVUser from;
+    private String objectId;
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
 
     public AVUser getFrom() {
         return from;

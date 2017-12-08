@@ -51,6 +51,11 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
+    public List<Subject> getSubjects(int skip, int limit) throws AVException {
+        return null;
+    }
+
+    @Override
     public boolean getRelationship(User user, boolean isFollower) {
         return false;
     }
@@ -92,6 +97,11 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public void deleteComment(Comment comment) {
+
+    }
+
+    @Override
+    public void deleteSubject(Subject subject) throws AVException {
 
     }
 
