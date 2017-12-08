@@ -13,6 +13,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.bean.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 
@@ -218,6 +219,16 @@ public class AVRemoteDataSource implements DataSource {
         comments.put(Comment.STATUS_ID,statusId);
         comment.setComment(comments);
         comments.save();
+    }
+
+    @Override
+    public void addSubject(@NonNull Subject subject) throws AVException {
+        AVObject subjects = new AVObject(Subject.SUBJECT);
+        subjects.put(Subject.CONTENT,subject.getContent());
+        subjects.put(Subject.TITLE,subject.getTitle());
+        subjects.put(Subject.USERNAME,subject.getUsername());
+        subjects.put(Subject.FROM,AVUser.getCurrentUser());
+        subjects.save();
     }
 
     @Override

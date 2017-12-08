@@ -8,6 +8,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.bean.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.local.LocalDataSource;
 import com.wen.hugo.data.remote.AVRemoteDataSource;
@@ -87,6 +88,11 @@ public class DataRepository implements DataSource{
     @Override
     public void addComment(String statusId,@NonNull Comment comment) throws AVException{
         mAVRemoteDataSource.addComment(statusId,comment);
+    }
+
+    @Override
+    public void addSubject(@NonNull Subject subject) throws AVException {
+        mAVRemoteDataSource.addSubject(subject);
     }
 
     @Override

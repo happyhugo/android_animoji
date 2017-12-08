@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.bean.Subject;
 import com.wen.hugo.bean.User;
 
 import java.util.List;
@@ -37,6 +38,8 @@ public interface DataSource {
     Observable<String> addSendStatus(@NonNull String content,Bitmap bitmap);
 
     void addComment(String statusId,@NonNull Comment comment) throws AVException;
+
+    void addSubject(@NonNull Subject subject) throws AVException;
 
     String addUploadFile(@NonNull Bitmap bitmap) throws AVException;
 

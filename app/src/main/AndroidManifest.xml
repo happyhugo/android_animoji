@@ -21,6 +21,8 @@
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".publishStatus.PublishStatusActivity"
             android:label="发布状态"/>
+        <activity android:name=".publishSubject.PublishSubjectActivity"
+            android:label="发布状态"/>
         <activity android:name=".userPage.UserPageActivity"
             android:label="用户主页"/>
         <activity android:name=".statusPage.StatusPageActivity"

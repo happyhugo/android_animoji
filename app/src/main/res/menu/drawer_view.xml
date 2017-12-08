@@ -38,9 +38,11 @@
     <item android:title="Sub items">
         <menu>
             <item
+                android:id="@+id/add_subject"
                 android:icon="@drawable/ic_dashboard"
                 android:title="添加题库" />
             <item
+                android:id="@+id/my_subject"
                 android:icon="@drawable/ic_forum"
                 android:title="我的题库" />
             <item

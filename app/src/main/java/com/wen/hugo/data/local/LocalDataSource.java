@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
+import com.wen.hugo.bean.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 
@@ -61,6 +62,11 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public void addComment(String statusId,@NonNull Comment comment) {
+
+    }
+
+    @Override
+    public void addSubject(@NonNull Subject subject) throws AVException {
 
     }
 
