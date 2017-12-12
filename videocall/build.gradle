@@ -25,9 +25,9 @@ android {
             }
         }
 
-        ndk {
-            abiFilters "armeabi-v7a", "x86" // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
-        }
+//        ndk {
+//            abiFilters "armeabi-v7a"// DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
+//        }
 
     }
 

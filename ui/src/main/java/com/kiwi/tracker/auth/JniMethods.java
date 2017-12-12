@@ -11,7 +11,6 @@ import android.util.Log;
 
 import com.agora.tracker.AGFaceTracker;
 import com.agora.tracker.auth.AESCipher;
-import com.blankj.utilcode.utils.DeviceUtils;
 import com.blankj.utilcode.utils.StringUtils;
 import com.kiwi.tracker.JNIFaceTracker;
 
@@ -20,8 +19,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -88,7 +85,7 @@ public class JniMethods {
             System.out.println("aaaaaaa:key:"+this.key);
             System.out.println("aaaaaaa:liense:"+AGFaceTracker.getLicense());
             System.out.println("aaaaaaa:decrypt:"+AESCipher.decrypt(this.key, AGFaceTracker.getLicense()));
-            int ret1 = JNIFaceTracker.auth(this.mContext, "20170925#20171202#com.kiwi.tracker.testing171201");
+            int ret1 = JNIFaceTracker.auth(this.mContext, "20170925#20180122#com.kiwi.tracker.testing171201");
             if(ret1 < 0) {
                 Log.e("Tracker", "auth license failed,retCode:" + ret1);
             } else {
