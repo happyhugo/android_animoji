@@ -28,10 +28,12 @@ import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.wen.hugo.R;
+import com.wen.hugo.settingPage.SetttingPageActivity;
 import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
 import com.wen.hugo.followPage.FollowPageActivity;
 import com.wen.hugo.followPage.FollowPageFragment;
+import com.wen.hugo.loginAndRegister.LoginActivity;
 import com.wen.hugo.mySubject.MySubjectActivity;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.publishSubject.PublishSubjectActivity;
@@ -53,6 +55,8 @@ import butterknife.ButterKnife;
  * TODOx
  */
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener {
+
+    private final static int LOGOUT = 13;
 
     @BindView(R.id.bottom_navigation_bar)
     BottomNavigationBar bottomNavigationBar;
@@ -145,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                         break;
                     case R.id.my_subject:
                         MySubjectActivity.go(MainActivity.this);
+                        break;
+                    case R.id.my_setting:
+                        Intent setting = new Intent(MainActivity.this, SetttingPageActivity.class);
+                        startActivityForResult(setting, LOGOUT);
                         break;
                 }
                 currentMenuItem = 0;
@@ -357,5 +365,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     public int getUnreadMsgCountTotal() {
         return EMClient.getInstance().chatManager().getUnreadMsgsCount();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == LOGOUT) {
+                AVUser.logOut();
+                EMClient.getInstance().logout(true);
+                startActivity(new Intent(this, LoginActivity.class));
+                this.finish();
+            }
+        }
+    }
+
+
 }
 

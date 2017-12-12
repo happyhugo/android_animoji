@@ -36,7 +36,8 @@
             android:label="图片展示" />
         <activity android:name=".followPage.FollowPageActivity"
             android:label="关注" />
-
+        <activity android:name=".settingPage.SetttingPageActivity"
+            android:label="设置" />
 
         <!-- huanxin  -->
         <activity android:name=".chatPage.ChatActivity"

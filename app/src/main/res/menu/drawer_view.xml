@@ -46,6 +46,7 @@
                 android:icon="@drawable/ic_forum"
                 android:title="我的题库" />
             <item
+                android:id="@+id/my_setting"
                 android:icon="@drawable/ic_forum"
                 android:title="设置" />
         </menu>
