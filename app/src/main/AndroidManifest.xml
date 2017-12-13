@@ -26,7 +26,8 @@
         <activity android:name=".mySubject.MySubjectActivity"
             android:label="我的题目"/>
         <activity android:name=".userPage.UserPageActivity"
-            android:label="用户主页"/>
+            android:label="用户主页"
+            android:theme="@style/Theme.DesignDemoTransparent"/>
         <activity android:name=".statusPage.StatusPageActivity"
             android:label="评论"/>
         <activity
