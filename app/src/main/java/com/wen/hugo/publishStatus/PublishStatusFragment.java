@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -35,14 +34,11 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
 
     private ProgressDialog mProgressDialog;
 
-    @BindView(R.id.editText)
+    @BindView(R.id.fabu_text)
     EditText editText;
 
-    @BindView(R.id.image)
-    ImageView imageView;
-
     @BindView(R.id.imageAction)
-    Button imageAction;
+    ImageView imageView;
 
     Bitmap bitmap;
 
@@ -116,7 +112,7 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
         getActivity().finish();
     }
 
-    @OnClick(R.id.send)
+
     void send() {
         mPresenter.publish(editText.getText().toString(),bitmap);
     }
@@ -135,13 +131,9 @@ public class PublishStatusFragment extends Fragment implements PublishStatusCont
                 exception.printStackTrace();
             }
             imageView.setImageBitmap(bitmap);
-
-            imageAction.setText("取消图片");
-            imageView.setVisibility(View.VISIBLE);
         } else {
             bitmap = null;
-            imageAction.setText("添加图片");
-            imageView.setVisibility(View.INVISIBLE);
+            imageView.setImageResource(R.drawable.icon_plus_photo);
         }
     }
 
