@@ -59,7 +59,8 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
     protected void convert(BaseViewHolder helper,final Status status) {
         final AVUser source = status.getUser();
         ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
-        ImageUtils.displayAvatar(source, avatarView);
+        ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
+        ImageUtils.displayAvatar(source, avatarView,avatarView2);
         helper.setText(R.id.nameView,source.getUsername());
         TextView statusText = ((TextView)helper.getView(R.id.statusText));
         if (TextUtils.isEmpty(status.getMessage())) {

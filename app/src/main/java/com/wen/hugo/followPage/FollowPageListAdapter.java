@@ -19,7 +19,8 @@ public class FollowPageListAdapter extends BaseQuickAdapter<AVUser, BaseViewHold
     @Override
     protected void convert(BaseViewHolder helper, AVUser item) {
         ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
-        ImageUtils.displayAvatar(item, avatarView);
+        ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
+        ImageUtils.displayAvatar(item, avatarView,avatarView2);
         helper.setText(R.id.nameView,item.getUsername());
     }
 }

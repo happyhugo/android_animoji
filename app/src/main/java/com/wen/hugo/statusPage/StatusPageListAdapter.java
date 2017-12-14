@@ -33,7 +33,8 @@ public class StatusPageListAdapter extends BaseQuickAdapter<Comment, BaseViewHol
     protected void convert(BaseViewHolder helper, final Comment comment) {
         final AVUser source = comment.getFrom();
         ImageView avatarView = ((ImageView)helper.getView(R.id.iv_avatar));
-        ImageUtils.displayAvatar(source, avatarView);
+        ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
+        ImageUtils.displayAvatar(source, avatarView,avatarView2);
         helper.setText(R.id.tv_nick,source.getUsername());
         if (comment.getComment().getCreatedAt() == null) {
             helper.setText(R.id.tv_time,millisecs2DateString(System.currentTimeMillis()));
