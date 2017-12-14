@@ -20,6 +20,9 @@ import io.reactivex.Observable;
  */
 
 public class LocalDataSource implements DataSource {
+    public List<AVUser> follows;
+    public List<AVUser> folling;
+
     @Override
     public List<Status> getNewStatus(int skip, int limit) {
         return null;
@@ -37,12 +40,12 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public List<AVUser> getFollows(String userId, int skip, int limit) throws AVException {
-        return null;
+        return follows;
     }
 
     @Override
-    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException {
-        return null;
+    public List<AVUser> getFollowing(String userId, int skip, int limit,boolean force) throws AVException {
+        return folling;
     }
 
     @Override

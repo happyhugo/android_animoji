@@ -24,6 +24,6 @@ public interface FollowPageContract {
 
         void getFollows(String userId, int skip);
 
-        void getFollowing(String userId, int skip);
+        void getFollowing(String userId, int skip,boolean force);
     }
 }

@@ -7,8 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -21,9 +19,7 @@ import com.wen.hugo.util.ImageUtils;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder> {
@@ -33,7 +29,7 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
     private Context ctx;
 
     public UserPageListAdapter(Context ctx, UserPageContract.Presenter presenter) {
-        super(R.layout.status_item, null);
+        super(R.layout.user_item, null);
         this.ctx = ctx;
         mPresenter = presenter;
     }
@@ -57,24 +53,12 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
 
     @Override
     protected void convert(BaseViewHolder helper,final Status status) {
-        final AVUser source = status.getUser();
-        ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
-        ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
-        ImageUtils.displayAvatar(source, avatarView,avatarView2);
-        helper.setText(R.id.nameView,source.getUsername());
-        TextView statusText = ((TextView)helper.getView(R.id.statusText));
-        if (TextUtils.isEmpty(status.getMessage())) {
-            statusText.setVisibility(View.GONE);
-        } else {
-            statusText.setText(status.getMessage());
-            statusText.setVisibility(View.VISIBLE);
-        }
-        ImageView statusImage = ((ImageView)helper.getView(R.id.statusImage));
+
+        ImageView statusImage = ((ImageView)helper.getView(R.id.post_attachment));
 
         if (TextUtils.isEmpty(status.getImg()) == false) {
             statusImage.setVisibility(View.VISIBLE);
-            ImageLoader.getInstance().displayImage(status.getImg(),
-                    statusImage, ImageUtils.normalImageOptions);
+            ImageLoader.getInstance().displayImage(status.getImg(),statusImage, ImageUtils.normalImageOptions);
             statusImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -86,47 +70,17 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         } else {
             statusImage.setVisibility(View.GONE);
         }
-        final AVObject detail = status.getDetail();
 
-        final List<String> likes;
-        if (detail.get("likes") != null) {
-            likes = (List<String>) detail.get("likes");
+
+        TextView statusText = ((TextView)helper.getView(R.id.post_content));
+        if (TextUtils.isEmpty(status.getMessage())) {
+            statusText.setVisibility(View.GONE);
         } else {
-            likes = new ArrayList<String>();
-        }
-        int n = likes.size();
-        if (n > 0) {
-            helper.setText(R.id.likeCount,n + "");
-        } else {
-            helper.setText(R.id.likeCount,"");
+            statusText.setText(status.getMessage());
+            statusText.setVisibility(View.VISIBLE);
         }
 
-        final AVUser user = AVUser.getCurrentUser();
-        final String userId = user.getObjectId();
-        final boolean contains = likes.contains(userId);
-        ImageView likeView = ((ImageView)helper.getView(R.id.likeView));
-        if (contains) {
-            likeView.setImageResource(R.drawable.status_ic_player_liked);
-        } else {
-            likeView.setImageResource(R.drawable.ic_player_like);
-        }
-
-        View likeLayout = ((View)helper.getView(R.id.likeLayout));
-        likeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.updateStatusLikes(status, likes);
-            }
-        });
-
-        helper.setText(R.id.timeView,millisecs2DateString(status.getDate().getTime()));
-
-        avatarView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserPageActivity.go(ctx, source);
-            }
-        });
+        helper.setText(R.id.post_time,millisecs2DateString(status.getDate().getTime()));
 
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

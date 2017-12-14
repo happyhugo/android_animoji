@@ -3,11 +3,13 @@ package com.wen.hugo.userPage;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -18,8 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +37,7 @@ import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.util.ActivityUtils;
-import com.wen.hugo.widget.ListView.StatusNetAsyncTask;
+import com.wen.hugo.util.ImageUtils;
 
 import java.util.List;
 
@@ -76,18 +78,6 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     private UserPageListAdapter mAdapter;
 
-    @BindView(R.id.followAction)
-    Button followActionBtn;
-
-    @BindView(R.id.talkAction)
-    Button talkActionBtn;
-
-    @BindView(R.id.followStatus)
-    TextView followStatusView;
-
-    @BindView(R.id.followLayout)
-    View followLayout;
-
     private View errorView;
 
     @BindView(R.id.rv_list)
@@ -95,6 +85,15 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
     @BindView(R.id.swipeLayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.icon)
+    FloatingActionButton floatingActionButton;
+
+    @BindView(R.id.user_bottom_frame)
+    LinearLayout bottom;
+
+    @BindView(R.id.user_bottom_follow_txt)
+    TextView tv;
 
     public static UserPageFragment newInstance() {
         return new UserPageFragment();
@@ -135,6 +134,9 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
             init();
             mAdapter = new UserPageListAdapter(getActivity(), mPresenter);
         }
+
+
+
         initList();
 
         final Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar);
@@ -143,15 +145,19 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) root.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(user.getUsername());
+
+        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getActivity().getResources().getColor(ImageUtils.getRandomColor(user.getUsername()))));
+        floatingActionButton.setImageResource(ImageUtils.getRandomDrawable(user.getUsername()));
+
         final ImageView imageView = (ImageView) root.findViewById(R.id.backdrop);
-        Glide.with(this).load(R.drawable.cheese_1).centerCrop().into(imageView);
+        Glide.with(this).load(ImageUtils.getRandomCheeseDrawable()).centerCrop().into(imageView);
 
         //保存要保存的view变量  就是refreshs获得的变量
         if (savedInstanceState == null) {
             refresh();
         }
 
-        refreshs();
+        refreshs(false);
         return root;
     }
 
@@ -286,7 +292,7 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         }
         if (end) {
             //第一页如果不够一页就不显示没有更多数据布局
-            mAdapter.loadMoreEnd(isRefresh);
+            mAdapter.loadMoreEnd(false);
         } else {
             mAdapter.loadMoreComplete();
         }
@@ -321,7 +327,30 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    @OnClick(R.id.followAction)
+    @Override
+    public void setText(List<AVUser> avUsers) {
+        setLoadingIndicator(false);
+        boolean follow = false;
+        for(AVUser users:avUsers){
+            if(users.getObjectId().equals(user.getObjectId())){
+                follow = true;
+                break;
+            }
+        }
+
+        int followButtonResId;
+        if (follow) {
+            actionType = CANCEL_FOLLOW;
+            followButtonResId = R.string.status_cancelFollow;
+        } else {
+            actionType = FOLLOW;
+            followButtonResId = R.string.status_follow;
+        }
+
+        tv.setText(getString(followButtonResId));
+    }
+
+    @OnClick(R.id.user_bottom_follow)
     void followAction() {
         if (actionType != -1) {
             if (myself) {
@@ -338,22 +367,23 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
                 @Override
                 public void done(AVObject object, AVException e) {
                     if (ActivityUtils.filterException(getContext(), e)) {
-                        refreshs();
+                        refreshs(true);
                     }
                 }
             });
         }
     }
 
-    @OnClick(R.id.talkAction)
+    @OnClick(R.id.user_bottom_chat)
     void talkAction() {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(EaseConstant.EXTRA_USER_ID, user.getUsername());
         startActivity(intent);
     }
 
-    public static void followAction(AVUser user, boolean follow, FollowCallback followCallback) {
+    public  void followAction(AVUser user, boolean follow, FollowCallback followCallback) {
         AVUser currentUser = AVUser.getCurrentUser();
+        setLoadingIndicator(true);
         if (follow) {
             currentUser.followInBackground(user.getObjectId(), followCallback);
         } else {
@@ -390,60 +420,61 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         return avUsers.isEmpty() == false;
     }
 
-    private void refreshs() {
-        new StatusNetAsyncTask(getActivity()) {
-            @Override
-            protected void doInBack() throws Exception {
-                if (!myself) {
-                    followStatus = followStatus(user);
-                }
-            }
-
-            @Override
-            protected void onPost(Exception e) {
-                if (ActivityUtils.filterException(getActivity(), e)) {
-                    if (myself) {
-                        followStatusView.setVisibility(View.GONE);
-                        followLayout.setVisibility(View.GONE);
-                        followActionBtn.setVisibility(View.GONE);
-                        talkActionBtn.setVisibility(View.GONE);
-                        return;
-                    }
-                    followStatusView.setVisibility(View.VISIBLE);
-                    followActionBtn.setVisibility(View.VISIBLE);
-                    talkActionBtn.setVisibility(View.VISIBLE);
-
-                    int followStatusDescId = R.string.status_none_follow_desc;
-                    switch (followStatus) {
-                        case MUTUAL_FOLLOW:
-                            followStatusDescId = R.string.status_mutual_follow;
-                            break;
-                        case FOLLOWER:
-                            followStatusDescId = R.string.status_follower_desc;
-                            break;
-                        case FOLLOWING:
-                            followStatusDescId = R.string.status_following_desc;
-                            break;
-                        case NONE_FOLLOW:
-                            followStatusDescId = R.string.status_none_follow_desc;
-                            break;
-                    }
-                    String followStatusDesc = getString(followStatusDescId);
-                    followStatusView.setText(followStatusDesc);
-
-                    int followButtonResId;
-                    if (followStatus == MUTUAL_FOLLOW ||
-                            followStatus == FOLLOWING) {
-                        actionType = CANCEL_FOLLOW;
-                        followButtonResId = R.string.status_cancelFollow;
-                    } else {
-                        actionType = FOLLOW;
-                        followButtonResId = R.string.status_follow;
-                    }
-
-                    followActionBtn.setText(getString(followButtonResId));
-                }
-            }
-        }.execute();
+    private void refreshs(boolean force) {
+        if (myself) {
+            bottom.setVisibility(View.GONE);
+            return;
+        }
+        mPresenter.getFollowing(AVUser.getCurrentUser().getObjectId(),0,force);
     }
+//        new StatusNetAsyncTask(getActivity()) {
+//            @Override
+//            protected void doInBack() throws Exception {
+//                if (!myself) {
+//                    followStatus = followStatus(user);
+//                }
+//            }
+//
+//            @Override
+//            protected void onPost(Exception e) {
+//                if (ActivityUtils.filterException(getActivity(), e)) {
+//                    if (myself) {
+//                        bottom.setVisibility(View.GONE);
+//                        return;
+//                    }
+//                    bottom.setVisibility(View.VISIBLE);
+//
+////                    int followStatusDescId = R.string.status_none_follow_desc;
+////                    switch (followStatus) {
+////                        case MUTUAL_FOLLOW:
+////                            followStatusDescId = R.string.status_mutual_follow;
+////                            break;
+////                        case FOLLOWER:
+////                            followStatusDescId = R.string.status_follower_desc;
+////                            break;
+////                        case FOLLOWING:
+////                            followStatusDescId = R.string.status_following_desc;
+////                            break;
+////                        case NONE_FOLLOW:
+////                            followStatusDescId = R.string.status_none_follow_desc;
+////                            break;
+////                    }
+////                    String followStatusDesc = getString(followStatusDescId);
+////                    tv.setText(followStatusDesc);
+//
+//                    int followButtonResId;
+//                    if (followStatus == MUTUAL_FOLLOW ||
+//                            followStatus == FOLLOWING) {
+//                        actionType = CANCEL_FOLLOW;
+//                        followButtonResId = R.string.status_cancelFollow;
+//                    } else {
+//                        actionType = FOLLOW;
+//                        followButtonResId = R.string.status_follow;
+//                    }
+//
+//                    tv.setText(getString(followButtonResId));
+//                }
+//            }
+//        }.execute();
+//    }
 }

@@ -29,7 +29,7 @@ public interface DataSource {
 
     List<AVUser> getFollows(String userId, int skip, int limit) throws AVException;
 
-    List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException;
+    List<AVUser> getFollowing(String userId, int skip, int limit,boolean force) throws AVException;
 
     List<Comment> getComments(String statusId,int skip,int limit) throws AVException;
 

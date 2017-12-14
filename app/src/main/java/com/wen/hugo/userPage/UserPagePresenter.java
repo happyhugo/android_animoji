@@ -166,4 +166,28 @@ public class UserPagePresenter implements UserPageContract.Presenter {
                     }
                 }));
     }
+
+    @Override
+    public void getFollowing(final String userId,final int skip,final boolean force) {
+        mCompositeDisposable.add(
+                Observable.create(new ObservableOnSubscribe<List<AVUser>>() {
+                    @Override
+                    public void subscribe(ObservableEmitter<List<AVUser>> e) throws Exception {
+                        e.onNext(mDataRepository.getFollowing(userId, skip, Constans.ONE_FOLLOW_PAGE_SIZE,force));
+                    }
+                })
+                        .subscribeOn(mSchedulerProvider.computation())
+                        .observeOn(mSchedulerProvider.ui())
+                        .subscribe(new Consumer<List<AVUser>>() {
+                            @Override
+                            public void accept(List<AVUser> data) {
+                                mUserPageView.setText(data);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                mUserPageView.showLoadingError(throwable.getMessage());
+                            }
+                        }));
+    }
 }

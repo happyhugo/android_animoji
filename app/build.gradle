@@ -51,6 +51,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.1.0'
     implementation files('libs/prettytime-3.2.5.Final.jar')
     implementation project(':easeui')
-    implementation project(':videocall')
 }
 

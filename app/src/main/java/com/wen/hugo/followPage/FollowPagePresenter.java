@@ -83,12 +83,12 @@ public class FollowPagePresenter implements FollowPageContract.Presenter {
     }
 
     @Override
-    public void getFollowing(final String userId,final int skip) {
+    public void getFollowing(final String userId,final int skip,final boolean force) {
         mCompositeDisposable.add(
                 Observable.create(new ObservableOnSubscribe<List<AVUser>>() {
                     @Override
                     public void subscribe(ObservableEmitter<List<AVUser>> e) throws Exception {
-                        e.onNext(mDataRepository.getFollowing(userId, skip, Constans.ONE_FOLLOW_PAGE_SIZE));
+                        e.onNext(mDataRepository.getFollowing(userId, skip, Constans.ONE_FOLLOW_PAGE_SIZE,force));
                     }
                 })
                         .subscribeOn(mSchedulerProvider.computation())

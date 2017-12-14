@@ -10,89 +10,107 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="256dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/followLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="关注状态"
-            android:gravity="right" />
-
-
-        <TextView
-            android:id="@+id/followStatus"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_height="wrap_content"
-            android:text="无" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
-
-        <Button
-            android:id="@+id/followAction"
-            style="@style/status_menu"
-            android:text="关注" />
-
-
-        <Button
-            android:id="@+id/talkAction"
-            style="@style/status_menu"
-            android:text="私聊" />
-    </LinearLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/icon"
+        android:layout_width="70dip"
+        android:layout_height="70dip"
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/user_bottom_frame"
+        android:layout_width="fill_parent"
+        android:layout_height="45.0dip"
+        android:background="#ffffffff"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="5.0dip">
+
+        <FrameLayout
+            android:id="@+id/user_bottom_follow"
+            android:layout_width="0.0dip"
+            android:layout_height="35dip"
+            android:layout_weight="1.0"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="5dip"
+            android:background="@drawable/btn_follow_pre_bg">
+
+                <TextView
+                    android:id="@+id/user_bottom_follow_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="关注"
+                    android:textColor="#ffffffff"
+                    android:textSize="15.0sp" />
+            </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/user_bottom_chat"
+            android:background="@drawable/btn_chat_bg"
+            android:layout_width="0.0dip"
+            android:layout_height="35dip"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="10dip"
+            android:layout_weight="1.0">
+
+                <TextView
+                    android:id="@+id/user_bottom_chat_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="私聊"
+                    android:textColor="#ffffffff"
+                    android:textSize="15.0sp" />
+            </FrameLayout>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

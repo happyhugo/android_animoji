@@ -35,6 +35,22 @@ public class ImageUtils {
         ImageLoader.getInstance().init(config);
     }
 
+    public static int getRandomCheeseDrawable() {
+        switch (RANDOM.nextInt(5)) {
+            default:
+            case 0:
+                return R.drawable.cheese_1;
+            case 1:
+                return R.drawable.cheese_2;
+            case 2:
+                return R.drawable.cheese_3;
+            case 3:
+                return R.drawable.cheese_4;
+            case 4:
+                return R.drawable.cheese_5;
+        }
+    }
+
     public synchronized static void displayAvatar(AVUser user, ImageView avatarView,ImageView avatarView2) {
         avatarView.setImageResource(getRandomColor(user.getUsername()));
         avatarView2.setImageResource(getRandomDrawable(user.getUsername()));

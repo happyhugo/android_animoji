@@ -136,7 +136,7 @@ public class AVRemoteDataSource implements DataSource {
     }
 
     @Override
-    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException {
+    public List<AVUser> getFollowing(String userId, int skip, int limit,boolean force) throws AVException {
         AVQuery<AVUser> q = AVUser.followeeQuery(userId,AVUser.class);
         q.skip(skip);
         q.limit(limit);

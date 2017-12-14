@@ -82,7 +82,7 @@ public class FollowPageFragment extends Fragment implements FollowPageContract.V
         ButterKnife.bind(this,root);
         setRetainInstance(true);
         initList();
-        refresh();
+        refresh(false);
         return root;
     }
 
@@ -96,7 +96,7 @@ public class FollowPageFragment extends Fragment implements FollowPageContract.V
         errorView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refresh();
+                refresh(true);
             }
         });
         initAdapter();
@@ -127,18 +127,18 @@ public class FollowPageFragment extends Fragment implements FollowPageContract.V
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(true);
             }
         });
     }
 
-    private void refresh() {
+    private void refresh(boolean force) {
         mSwipeRefreshLayout.setRefreshing(true);
         mAdapter.setEnableLoadMore(false);//这里的作用是防止下拉刷新的时候还可以上拉加载
         if(type==TYPE_FOLLOWER) {
             mPresenter.getFollows(AVUser.getCurrentUser().getObjectId(),0);
         }else if(type==TYPE_FOLLOWING) {
-            mPresenter.getFollowing(AVUser.getCurrentUser().getObjectId(), 0);
+            mPresenter.getFollowing(AVUser.getCurrentUser().getObjectId(), 0,force);
         }
     }
 
@@ -147,7 +147,7 @@ public class FollowPageFragment extends Fragment implements FollowPageContract.V
         if(type==TYPE_FOLLOWER) {
             mPresenter.getFollows(AVUser.getCurrentUser().getObjectId(),mAdapter.getData().size());
         }else if(type==TYPE_FOLLOWING) {
-            mPresenter.getFollowing(AVUser.getCurrentUser().getObjectId(), mAdapter.getData().size());
+            mPresenter.getFollowing(AVUser.getCurrentUser().getObjectId(), mAdapter.getData().size(),false);
         }
     }
 

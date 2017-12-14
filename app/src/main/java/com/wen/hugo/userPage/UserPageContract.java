@@ -24,6 +24,8 @@ public interface UserPageContract {
         void adapterRemoveItem(Status status);
 
         void clear();
+
+        void setText(List<AVUser> avUsers);
     }
 
     interface Presenter extends BasePresenter {
@@ -33,6 +35,8 @@ public interface UserPageContract {
         void getUserStatusList(AVUser avUser,int skip);
 
         void deleteStatus(Status status);
+
+        void getFollowing(String userId, int skip,boolean force);
 
     }
 }

@@ -62,12 +62,18 @@ public class DataRepository implements DataSource{
 
     @Override
     public List<AVUser> getFollows(String userId, int skip, int limit) throws AVException{
-        return mAVRemoteDataSource.getFollows(userId, skip, limit);
+        if(mLocalDataSource.getFollows(userId, skip,limit)==null){
+            ((LocalDataSource)mLocalDataSource).follows = mAVRemoteDataSource.getFollows(userId, skip, limit);
+        }
+        return mLocalDataSource.getFollows(userId, skip,limit);
     }
 
     @Override
-    public List<AVUser> getFollowing(String userId, int skip, int limit) throws AVException{
-        return mAVRemoteDataSource.getFollowing(userId, skip, limit);
+    public List<AVUser> getFollowing(String userId, int skip, int limit,boolean force) throws AVException{
+        if(mLocalDataSource.getFollowing(userId, skip,limit,force)==null||force){
+            ((LocalDataSource)mLocalDataSource).folling = mAVRemoteDataSource.getFollowing(userId, skip, limit,force);
+        }
+        return mLocalDataSource.getFollowing(userId, skip,limit,force);
     }
 
     @Override

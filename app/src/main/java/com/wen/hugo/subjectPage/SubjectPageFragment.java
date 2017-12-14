@@ -1,6 +1,5 @@
 package com.wen.hugo.subjectPage;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,7 +21,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.agora.openvcall.ui.MainActivity;
 
 /**
  * Created by hugo on 11/22/17.
@@ -180,7 +178,7 @@ public class SubjectPageFragment extends Fragment implements SubjectPageContract
 
     @OnClick(R.id.match)
     void match() {
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(getActivity(), MainActivity.class);
+//        startActivity(intent);
     }
 }
