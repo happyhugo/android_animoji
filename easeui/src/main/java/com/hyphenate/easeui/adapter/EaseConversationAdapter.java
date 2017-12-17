@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -92,8 +92,9 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             holder.message = (TextView) convertView.findViewById(R.id.message);
             holder.time = (TextView) convertView.findViewById(R.id.time);
             holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
+            holder.avatar2 = (ImageView) convertView.findViewById(R.id.avatar2);
             holder.msgState = convertView.findViewById(R.id.msg_state);
-            holder.list_itease_layout = (RelativeLayout) convertView.findViewById(R.id.list_itease_layout);
+            holder.list_itease_layout = (LinearLayout) convertView.findViewById(R.id.list_itease_layout);
             holder.motioned = (TextView) convertView.findViewById(R.id.mentioned);
             convertView.setTag(holder);
         }
@@ -121,7 +122,7 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             holder.name.setText(room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username);
             holder.motioned.setVisibility(View.GONE);
         }else {
-            EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar);
+            EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar,holder.avatar2);
             EaseUserUtils.setUserNick(username, holder.name);
             holder.motioned.setVisibility(View.GONE);
         }
@@ -318,10 +319,11 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
         TextView time;
         /** avatar */
         ImageView avatar;
+        ImageView avatar2;
         /** status of last message */
         View msgState;
         /** layout */
-        RelativeLayout list_itease_layout;
+        LinearLayout list_itease_layout;
         TextView motioned;
     }
 }

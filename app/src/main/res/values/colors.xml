@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="white">#512DA8</color>
+    <color name="icon_select_color">#512DA8</color>
+    <color name="white">#FFFFFF</color>
+    <color name="bg_grey_300">#ffe0e0e0</color>
 </resources>

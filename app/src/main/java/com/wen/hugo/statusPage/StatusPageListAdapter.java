@@ -7,10 +7,10 @@ import android.widget.ImageView;
 import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.userPage.UserPageActivity;
-import com.wen.hugo.util.ImageUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -34,7 +34,7 @@ public class StatusPageListAdapter extends BaseQuickAdapter<Comment, BaseViewHol
         final AVUser source = comment.getFrom();
         ImageView avatarView = ((ImageView)helper.getView(R.id.iv_avatar));
         ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
-        ImageUtils.displayAvatar(source, avatarView,avatarView2);
+        EaseImageUtils.displayAvatar(source.getUsername(), avatarView,avatarView2);
         helper.setText(R.id.tv_nick,source.getUsername());
         if (comment.getComment().getCreatedAt() == null) {
             helper.setText(R.id.tv_time,millisecs2DateString(System.currentTimeMillis()));

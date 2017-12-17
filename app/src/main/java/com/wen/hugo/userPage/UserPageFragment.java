@@ -33,6 +33,7 @@ import com.avos.avoscloud.FollowCallback;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.chatPage.ChatActivity;
@@ -146,8 +147,8 @@ public class UserPageFragment extends Fragment implements UserPageContract.View 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) root.findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(user.getUsername());
 
-        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getActivity().getResources().getColor(ImageUtils.getRandomColor(user.getUsername()))));
-        floatingActionButton.setImageResource(ImageUtils.getRandomDrawable(user.getUsername()));
+        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getActivity().getResources().getColor(EaseImageUtils.getRandomColor(user.getUsername()))));
+        floatingActionButton.setImageResource(EaseImageUtils.getRandomDrawable(user.getUsername()));
 
         final ImageView imageView = (ImageView) root.findViewById(R.id.backdrop);
         Glide.with(this).load(ImageUtils.getRandomCheeseDrawable()).centerCrop().into(imageView);

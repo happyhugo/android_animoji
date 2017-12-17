@@ -49,6 +49,14 @@ public class EaseUserUtils {
             Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
         }
     }
+
+    /**
+     * set user avatar
+     * @param username
+     */
+    public static void setUserAvatar(Context context, String username, ImageView imageView,ImageView imageView2){
+        EaseImageUtils.displayAvatar(username, imageView,imageView2);
+    }
     
     /**
      * set user's nickname

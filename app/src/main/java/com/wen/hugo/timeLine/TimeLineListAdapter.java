@@ -11,6 +11,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
 import com.wen.hugo.activity.ImageBrowserActivity;
@@ -43,7 +44,7 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
     protected void convert(BaseViewHolder helper,final Status status) {
         final AVUser source = status.getUser();
         ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
-        ImageUtils.displayAvatar(source, avatarView,((ImageView)helper.getView(R.id.avatarView2)));
+        EaseImageUtils.displayAvatar(source.getUsername(), avatarView,((ImageView)helper.getView(R.id.avatarView2)));
         helper.setText(R.id.nameView,source.getUsername());
         TextView statusText = ((TextView)helper.getView(R.id.statusText));
         if (TextUtils.isEmpty(status.getMessage())) {
