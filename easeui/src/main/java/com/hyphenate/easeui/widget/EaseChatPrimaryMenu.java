@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -33,7 +32,7 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements OnCl
     private View buttonPressToSpeak;
     private ImageView faceNormal;
     private ImageView faceChecked;
-    private Button buttonMore;
+    private ImageView buttonMore;
     private boolean ctrlPress = false;
 
     public EaseChatPrimaryMenu(Context context, AttributeSet attrs, int defStyle) {
@@ -62,7 +61,7 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements OnCl
         faceNormal = (ImageView) findViewById(R.id.iv_face_normal);
         faceChecked = (ImageView) findViewById(R.id.iv_face_checked);
         RelativeLayout faceLayout = (RelativeLayout) findViewById(R.id.rl_face);
-        buttonMore = (Button) findViewById(R.id.btn_more);
+        buttonMore = (ImageView) findViewById(R.id.btn_more);
         edittext_layout.setBackgroundResource(R.drawable.ease_input_bar_bg_normal);
         
         buttonSend.setOnClickListener(this);

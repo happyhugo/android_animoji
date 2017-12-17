@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingTop="13dp" >
+    android:paddingTop="13.0dip">
 
     <TextView
         android:id="@+id/timestamp"
@@ -14,79 +13,85 @@
         android:layout_height="wrap_content" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_chat_activity" >
+        android:layout_marginTop="@dimen/margin_chat_activity">
 
-        <com.hyphenate.easeui.widget.EaseImageView
-            android:id="@+id/iv_userhead"
+        <RelativeLayout
+            android:id="@+id/avatar_container"
             android:layout_width="@dimen/size_avatar"
             android:layout_height="@dimen/size_avatar"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="@dimen/margin_chat_activity"
-            android:src="@drawable/ease_default_avatar"
-            android:scaleType="fitXY" />
+            android:layout_marginLeft="12dip">
 
-        <RelativeLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
+
+        <LinearLayout
             android:id="@+id/bubble"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" 
-            android:layout_toRightOf="@id/iv_userhead"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_userid"
             android:layout_marginLeft="@dimen/margin_chat_activity"
-            android:layout_below="@+id/tv_userid"
-            android:background="@drawable/ease_chatfrom_bg"
-            >
+            android:layout_toRightOf="@id/avatar_container"
+            android:background="@drawable/icon_bubble_white">
 
             <ImageView
                 android:id="@+id/iv_voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-	            android:paddingRight="12dp"
-	            android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="10.0dip"
+                android:paddingRight="12.0dip"
                 android:src="@drawable/ease_chatfrom_voice_playing" />
-        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_length"
-            style="@style/chat_text_name_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/bubble"
-            android:layout_alignTop="@id/bubble"
-            android:gravity="center"
-            android:text="3&apos;&apos;"
-            tools:ignore="HardcodedText" />
-
-        <ImageView
-            android:id="@+id/iv_unread_voice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@id/bubble"
-            android:layout_toRightOf="@id/tv_length"
-            android:src="@drawable/ease_voice_unread" />
+            <TextView
+                android:id="@+id/tv_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20.0dip"
+                android:layout_marginRight="10.0sp"
+                android:gravity="center"
+                android:text="3''"
+                android:textColor="#ff32d8ab"
+                android:textSize="15.0sp" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleSmall"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@id/iv_unread_voice"
+            android:layout_width="30.0dip"
+            android:layout_height="30.0dip"
+            android:layout_marginTop="5.0dip"
+            android:layout_toRightOf="@id/bubble"
             android:visibility="invisible" />
 
-         <TextView
+        <TextView
             android:id="@+id/tv_userid"
             style="@style/chat_text_name_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/chat_nick_margin_left"
+            android:layout_toRightOf="@id/avatar_container"
             android:textSize="@dimen/chat_nick_text_size"
-            android:layout_toRightOf="@id/iv_userhead"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/iv_read"
+            android:layout_width="5.0dip"
+            android:layout_height="5.0dip"
+            android:layout_alignBottom="@id/bubble"
+            android:layout_toRightOf="@id/bubble"
+            android:background="@drawable/chat_read"
             android:visibility="gone" />
     </RelativeLayout>
-
 </LinearLayout>

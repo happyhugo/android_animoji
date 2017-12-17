@@ -40,6 +40,9 @@ public class EaseImageUtils extends com.hyphenate.util.ImageUtils{
     }
 
 	public synchronized static void displayAvatar(String name, ImageView avatarView, ImageView avatarView2) {
+		if(avatarView==null||avatarView2==null){
+			return;
+		}
 		avatarView.setImageResource(getRandomColor(name));
 		avatarView2.setImageResource(getRandomDrawable(name));
 	}

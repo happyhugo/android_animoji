@@ -4,17 +4,21 @@ import android.content.Context;
 import android.text.Spannable;
 import android.view.View;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.hyphenate.easeui.utils.EaseSmileUtils;
 
 public class EaseChatRowText extends EaseChatRow{
 
 	private TextView contentView;
+	private ImageView avatar_bg;
+	private ImageView avatar;
 
     public EaseChatRowText(Context context, EMMessage message, int position, BaseAdapter adapter) {
 		super(context, message, position, adapter);
@@ -28,7 +32,9 @@ public class EaseChatRowText extends EaseChatRow{
 
 	@Override
 	protected void onFindViewById() {
-		contentView = (TextView) findViewById(R.id.tv_chatcontent);
+        contentView = (TextView) findViewById(R.id.tv_chatcontent);
+        avatar_bg = (ImageView) findViewById(R.id.avatar_bg);
+        avatar = (ImageView) findViewById(R.id.avatar);
 	}
 
     @Override
@@ -37,6 +43,7 @@ public class EaseChatRowText extends EaseChatRow{
         Spannable span = EaseSmileUtils.getSmiledText(context, txtBody.getMessage());
         // 设置内容
         contentView.setText(span, BufferType.SPANNABLE);
+        EaseImageUtils.displayAvatar(message.getFrom(), avatar_bg, avatar);
     }
 
     @Override

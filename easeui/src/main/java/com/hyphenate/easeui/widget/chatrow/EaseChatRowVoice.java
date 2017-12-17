@@ -12,6 +12,7 @@ import com.hyphenate.chat.EMFileMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMVoiceMessageBody;
 import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.hyphenate.util.EMLog;
 
 public class EaseChatRowVoice extends EaseChatRowFile {
@@ -19,7 +20,9 @@ public class EaseChatRowVoice extends EaseChatRowFile {
 
     private ImageView voiceImageView;
     private TextView voiceLengthView;
-    private ImageView readStatusView;
+//    private View readStatusView;
+    private ImageView avatar_bg;
+    private ImageView avatar;
 
     private AnimationDrawable voiceAnimation;
 
@@ -37,11 +40,15 @@ public class EaseChatRowVoice extends EaseChatRowFile {
     protected void onFindViewById() {
         voiceImageView = ((ImageView) findViewById(R.id.iv_voice));
         voiceLengthView = (TextView) findViewById(R.id.tv_length);
-        readStatusView = (ImageView) findViewById(R.id.iv_unread_voice);
+//        readStatusView = (View) findViewById(R.id.iv_unread_voice);
+
+        avatar_bg = (ImageView) findViewById(R.id.avatar_bg);
+        avatar = (ImageView) findViewById(R.id.avatar);
     }
 
     @Override
     protected void onSetUpView() {
+        EaseImageUtils.displayAvatar(message.getFrom(), avatar_bg, avatar);
         EMVoiceMessageBody voiceBody = (EMVoiceMessageBody) message.getBody();
         int len = voiceBody.getLength();
         if (len > 0) {
@@ -59,9 +66,9 @@ public class EaseChatRowVoice extends EaseChatRowFile {
         if (message.direct() == EMMessage.Direct.RECEIVE) {
             if (message.isListened()) {
                 // hide the unread icon
-                readStatusView.setVisibility(View.INVISIBLE);
+//                readStatusView.setVisibility(View.INVISIBLE);
             } else {
-                readStatusView.setVisibility(View.VISIBLE);
+ //               readStatusView.setVisibility(View.VISIBLE);
             }
             EMLog.d(TAG, "it is receive msg");
             if (voiceBody.downloadStatus() == EMFileMessageBody.EMDownloadStatus.DOWNLOADING ||
@@ -110,7 +117,7 @@ public class EaseChatRowVoice extends EaseChatRowFile {
 
         // Hide the voice item not listened status view.
         if (message.direct() == EMMessage.Direct.RECEIVE) {
-            readStatusView.setVisibility(View.INVISIBLE);
+//            readStatusView.setVisibility(View.INVISIBLE);
         }
     }
 

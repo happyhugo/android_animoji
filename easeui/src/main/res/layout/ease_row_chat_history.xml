@@ -6,8 +6,7 @@
     android:id="@+id/list_itease_layout"
     android:background="@drawable/selector_white_selected"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent">
 
     <RelativeLayout
         android:id="@+id/avatar_container"

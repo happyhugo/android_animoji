@@ -53,7 +53,7 @@ public abstract class EaseChatRow extends LinearLayout {
     protected ImageView statusView;
     protected Activity activity;
 
-    protected TextView ackedView;
+    protected View ackedView;
     protected TextView deliveredView;
 
     protected MessageListItemClickListener itemClickListener;
@@ -97,7 +97,7 @@ public abstract class EaseChatRow extends LinearLayout {
 
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         statusView = (ImageView) findViewById(R.id.msg_status);
-        ackedView = (TextView) findViewById(R.id.tv_ack);
+        ackedView = (View) findViewById(R.id.tv_ack);
         deliveredView = (TextView) findViewById(R.id.tv_delivered);
 
         onFindViewById();
