@@ -111,7 +111,7 @@
 
             <TextView
                 android:id="@+id/square_item_like"
-                android:layout_width="wrap_content"
+                android:layout_width="20dip"
                 android:layout_height="20dip"
                 android:text="13"
                 android:paddingLeft="6.0dip"
@@ -126,7 +126,7 @@
 
             <TextView
                 android:id="@+id/square_item_comment"
-                android:layout_width="wrap_content"
+                android:layout_width="20dip"
                 android:layout_height="20dip"
                 android:layout_marginRight="40.0dip"
                 android:paddingLeft="6.0dip"

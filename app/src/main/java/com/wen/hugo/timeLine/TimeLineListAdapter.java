@@ -42,15 +42,15 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         final AVUser source = status.getUser();
         ImageView avatarView = ((ImageView)helper.getView(R.id.avatarView));
         EaseImageUtils.displayAvatar(source.getUsername(), avatarView,((ImageView)helper.getView(R.id.avatarView2)));
-        helper.setText(R.id.nameView,source.getUsername());
-        TextView statusText = ((TextView)helper.getView(R.id.statusText));
+        helper.setText(R.id.square_item_name,source.getUsername());
+        TextView statusText = ((TextView)helper.getView(R.id.post_content));
         if (TextUtils.isEmpty(status.getMessage())) {
             statusText.setVisibility(View.GONE);
         } else {
             statusText.setText(status.getMessage());
             statusText.setVisibility(View.VISIBLE);
         }
-        ImageView statusImage = ((ImageView)helper.getView(R.id.statusImage));
+        ImageView statusImage = ((ImageView)helper.getView(R.id.post_attachment));
 
         if (TextUtils.isEmpty(status.getImg()) == false) {
             statusImage.setVisibility(View.VISIBLE);
@@ -77,9 +77,9 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         }
         int n = likes.size();
         if (n > 0) {
-            helper.setText(R.id.likeCount,n + "");
+            helper.setText(R.id.square_item_like,n + "");
         } else {
-            helper.setText(R.id.likeCount,"");
+            helper.setText(R.id.square_item_like,"");
         }
 
         final AVUser user = AVUser.getCurrentUser();
@@ -87,20 +87,19 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         final boolean contains = likes.contains(userId);
         ImageView likeView = ((ImageView)helper.getView(R.id.likeView));
         if (contains) {
-            likeView.setImageResource(R.drawable.status_ic_player_liked);
+            likeView.setImageResource(R.drawable.selector_ic_unlike);
         } else {
-            likeView.setImageResource(R.drawable.ic_player_like);
+            likeView.setImageResource(R.drawable.selector_ic_like);
         }
 
-        View likeLayout = ((View)helper.getView(R.id.likeLayout));
-        likeLayout.setOnClickListener(new View.OnClickListener() {
+        likeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.updateStatusLikes(status, likes);
             }
         });
 
-        helper.setText(R.id.timeView, TimeUtils.millisecs2DateString(status.getDate().getTime()));
+        helper.setText(R.id.square_item_time, TimeUtils.millisecs2DateString(status.getDate().getTime()));
 
         avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
