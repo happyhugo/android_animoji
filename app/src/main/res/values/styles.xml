@@ -23,7 +23,7 @@
 
     <style name="bg">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">300dip</item>
         <item name="android:background">#F0F0F0</item>
         <item name="android:orientation">vertical</item>
     </style>

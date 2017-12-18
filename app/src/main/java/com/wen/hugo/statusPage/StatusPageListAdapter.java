@@ -11,11 +11,7 @@ import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.userPage.UserPageActivity;
-
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.wen.hugo.util.schedulers.TimeUtils;
 
 public class StatusPageListAdapter extends BaseQuickAdapter<Comment, BaseViewHolder> {
 
@@ -36,13 +32,14 @@ public class StatusPageListAdapter extends BaseQuickAdapter<Comment, BaseViewHol
         ImageView avatarView2 = ((ImageView)helper.getView(R.id.avatarView2));
         EaseImageUtils.displayAvatar(source.getUsername(), avatarView,avatarView2);
         helper.setText(R.id.tv_nick,source.getUsername());
+        helper.setText(R.id.tv_host,comment.getNumber()+"楼");
         if (comment.getComment().getCreatedAt() == null) {
-            helper.setText(R.id.tv_time,millisecs2DateString(System.currentTimeMillis()));
+            helper.setText(R.id.tv_time, TimeUtils.millisecs2DateString(System.currentTimeMillis()));
         } else {
-            helper.setText(R.id.tv_time,millisecs2DateString(comment.getComment().getCreatedAt().getTime()));
+            helper.setText(R.id.tv_time,TimeUtils.millisecs2DateString(comment.getComment().getCreatedAt().getTime()));
         }
         if (comment.getReplayTo() == null) {
-            helper.setText(R.id.tv_comment,comment.getComment().get(Comment.CONTENT).toString());
+            helper.setText(R.id.tv_comment,String.format("回复 楼主 的评论：%s", comment.getComment().get(Comment.CONTENT).toString()));
         } else {
             helper.setText(R.id.tv_comment,String.format("回复 %s 的评论：%s", comment.getReplayTo().getUsername(), comment.getComment().get(Comment.CONTENT).toString()));
         }
@@ -58,22 +55,5 @@ public class StatusPageListAdapter extends BaseQuickAdapter<Comment, BaseViewHol
                 mPresenter.replayComment(comment);
             }
         });
-    }
-
-    public static PrettyTime prettyTime = new PrettyTime();
-
-    public static String getDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-        return format.format(date);
-    }
-
-    public static String millisecs2DateString(long timestamp) {
-        long gap = System.currentTimeMillis() - timestamp;
-        if (gap < 1000 * 60 * 60 * 24) {
-            String s = prettyTime.format(new Date(timestamp));
-            return s.replace(" ", "");
-        } else {
-            return getDate(new Date(timestamp));
-        }
     }
 }

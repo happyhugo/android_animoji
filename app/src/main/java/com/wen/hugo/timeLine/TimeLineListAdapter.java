@@ -19,12 +19,9 @@ import com.wen.hugo.bean.Status;
 import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.userPage.UserPageActivity;
 import com.wen.hugo.util.ImageUtils;
+import com.wen.hugo.util.schedulers.TimeUtils;
 
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -103,7 +100,7 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
             }
         });
 
-        helper.setText(R.id.timeView,millisecs2DateString(status.getDate().getTime()));
+        helper.setText(R.id.timeView, TimeUtils.millisecs2DateString(status.getDate().getTime()));
 
         avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,25 +111,8 @@ public class TimeLineListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StatusPageActivity.go(view.getContext(),status.getStatus().getObjectId());
+                StatusPageActivity.go(view.getContext(),status);
             }
         });
-    }
-
-    public static PrettyTime prettyTime = new PrettyTime();
-
-    public static String getDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-        return format.format(date);
-    }
-
-    public static String millisecs2DateString(long timestamp) {
-        long gap = System.currentTimeMillis() - timestamp;
-        if (gap < 1000 * 60 * 60 * 24) {
-            String s = prettyTime.format(new Date(timestamp));
-            return s.replace(" ", "");
-        } else {
-            return getDate(new Date(timestamp));
-        }
     }
 }

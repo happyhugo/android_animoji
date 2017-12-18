@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffffff"
+    android:orientation="vertical"
+    android:paddingBottom="2.0dip"
+    android:paddingTop="2.0dip">
+
+    <LinearLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="50.0dip"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal"
+        android:paddingTop="4.0dip">
+
+            <EditText
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6.0dip"
+                android:layout_weight="1.0"
+                android:gravity="bottom"
+                android:id="@+id/et_comment"
+                style="?android:attr/textViewStyle"
+                android:layout_marginBottom="3.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:background="@null"
+                android:hint="请输入评论内容……"
+                android:maxLines="3"
+                android:minHeight="40.0dip"
+                android:paddingBottom="3.0dip"
+                android:paddingLeft="1.0dip"
+                android:paddingRight="1.0dip"
+                android:paddingTop="3.0dip"
+                android:textColor="#ff000000"
+                android:textColorHint="#ffd9d9d9"
+                android:textSize="16.0sp" />
+
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/button_send"
+            android:textColor="#ffb9b9b9"
+            android:textSize="16.0sp" />
+    </LinearLayout>
+</LinearLayout>

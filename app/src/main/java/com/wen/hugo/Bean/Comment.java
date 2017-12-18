@@ -20,6 +20,15 @@ public class Comment {
     private AVUser from;
     private AVUser replayTo;
     private String content;
+    private int number;
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
     public String getContent() {
         return content;

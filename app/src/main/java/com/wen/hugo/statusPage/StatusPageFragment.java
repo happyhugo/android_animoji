@@ -21,12 +21,25 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.hyphenate.easeui.utils.EaseImageUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.wen.hugo.R;
+import com.wen.hugo.activity.ImageBrowserActivity;
 import com.wen.hugo.bean.Comment;
+import com.wen.hugo.bean.MessageEvent;
+import com.wen.hugo.bean.Status;
+import com.wen.hugo.userPage.UserPageActivity;
+import com.wen.hugo.util.ImageUtils;
+import com.wen.hugo.util.schedulers.TimeUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -62,11 +75,15 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
     @BindView(R.id.btn_send)
     Button mBtnSend;
 
+    private Status status;
+
     InputMethodManager inputMethodManager;
 
     private Comment mComment;
 
     private String statusId;
+
+    private TextView tv;
 
     public static StatusPageFragment newInstance() {
         return new StatusPageFragment();
@@ -89,22 +106,36 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
         super.onActivityCreated(savedInstanceState);
     }
 
+
+    @Subscribe(sticky = true)
+    public void onMessageEvent(MessageEvent event){
+        status = event.status;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.statuspage_frag, container, false);
         ButterKnife.bind(this,root);
+        EventBus.getDefault().register(this);
         setRetainInstance(true);
         init();
         refresh();
         return root;
     }
 
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
     @OnClick(R.id.btn_send)
     void sendComment() {
         mComment.setContent(mEtComment.getText().toString());
         mComment.setFrom(AVUser.getCurrentUser());
+        mComment.setNumber(mAdapter.getItemCount());
         mPresenter.addComment(statusId,mComment);
         inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
@@ -130,20 +161,15 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
             public void afterTextChanged(Editable s) {
               if (TextUtils.isEmpty(mEtComment.getText().toString())) {
                   mBtnSend.setEnabled(false);
+                  mBtnSend.setTextColor(getActivity().getResources().getColor(R.color.grey));
               } else {
                   mBtnSend.setEnabled(true);
+                  mBtnSend.setTextColor(getActivity().getResources().getColor(R.color.black_deep));
               }
             }
         });
         mSwipeRefreshLayout.setColorSchemeColors(Color.rgb(47, 223, 189));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRecyclerView.getParent(), false);
-        errorView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refresh();
-            }
-        });
         initAdapter();
         initRefreshLayout();
     }
@@ -158,7 +184,7 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
             }
         });
         mAdapter.openLoadAnimation();
-        mAdapter.setEmptyView(errorView);
+
         mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
@@ -177,7 +203,66 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
             }
         });
 //        mAdapter.setPreLoadNumber(3);
+        mAdapter.addHeaderView(getHeadView());
+        mAdapter.setHeaderAndEmpty(true);
+
         mRecyclerView.setAdapter(mAdapter);
+        errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRecyclerView.getParent(), false);
+        tv = (TextView)errorView.findViewById(R.id.tv);
+        tv.setText("快点给楼主写评论吧");
+        errorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
+        mAdapter.setEmptyView(errorView);
+    }
+
+    private View getHeadView(){
+        View headView = getLayoutInflater().inflate(R.layout.user_comment_item, (ViewGroup) mRecyclerView.getParent(), false);
+        if(status!=null) {
+            ImageView avatarView = ((ImageView) headView.findViewById(R.id.avatarView));
+            ImageView avatarView2 = ((ImageView) headView.findViewById(R.id.avatarView2));
+            avatarView2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    UserPageActivity.go(getContext(), status.getUser());
+                }
+            });
+            EaseImageUtils.displayAvatar(status.getUser().getUsername(), avatarView, avatarView2);
+            ((TextView) headView.findViewById(R.id.square_item_name)).setText(status.getUser().getUsername());
+
+
+            ImageView statusImage = ((ImageView) headView.findViewById(R.id.post_attachment));
+
+            if (TextUtils.isEmpty(status.getImg()) == false) {
+                statusImage.setVisibility(View.VISIBLE);
+                ImageLoader.getInstance().displayImage(status.getImg(), statusImage, ImageUtils.normalImageOptions);
+                statusImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), ImageBrowserActivity.class);
+                        intent.putExtra("url", status.getImg());
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                statusImage.setVisibility(View.GONE);
+            }
+
+
+            TextView statusText = ((TextView) headView.findViewById(R.id.post_content));
+            if (TextUtils.isEmpty(status.getMessage())) {
+                statusText.setVisibility(View.GONE);
+            } else {
+                statusText.setText(status.getMessage());
+                statusText.setVisibility(View.VISIBLE);
+            }
+
+            ((TextView) headView.findViewById(R.id.square_item_time)).setText(TimeUtils.millisecs2DateString(status.getDate().getTime()));
+        }
+        return headView;
     }
 
     private void initRefreshLayout() {
@@ -221,6 +306,7 @@ public class StatusPageFragment extends Fragment implements StatusPageContract.V
     public void showLoadingError(String reason) {
         clear();
         Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
+        tv.setText(R.string.network_error);
     }
 
     @Override

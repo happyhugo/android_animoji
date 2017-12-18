@@ -7,4 +7,8 @@
     <color name="icon_select_color">#512DA8</color>
     <color name="white">#FFFFFF</color>
     <color name="bg_grey_300">#ffe0e0e0</color>
+    <color name="grey">#ffb9b9b9</color>
+    <color name="bg_listview">#F0F0F0</color>
+
+
 </resources>

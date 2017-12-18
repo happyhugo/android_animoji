@@ -152,7 +152,7 @@ public class AVRemoteDataSource implements DataSource {
         query.setLimit(limit);
         query.orderByAscending("createdAt");
         query.include(Comment.FROM);
-        query.include(Comment.REPLAY);
+//      query.include(Comment.REPLAY);
         List<AVObject> avComments = query.find();
         List<Comment> comments = new ArrayList<>();
         for(int i=0;i<avComments.size();i++){
@@ -160,6 +160,7 @@ public class AVRemoteDataSource implements DataSource {
             comment.setComment(avComments.get(i));
             comment.setFrom(avComments.get(i).getAVUser(Comment.FROM));
             comment.setReplayTo(avComments.get(i).getAVUser(Comment.REPLAY));
+            comment.setNumber(skip+i+1);
             comments.add(comment);
         }
         return comments;

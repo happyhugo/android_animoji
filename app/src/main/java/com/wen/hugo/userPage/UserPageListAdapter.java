@@ -15,11 +15,7 @@ import com.wen.hugo.activity.ImageBrowserActivity;
 import com.wen.hugo.bean.Status;
 import com.wen.hugo.statusPage.StatusPageActivity;
 import com.wen.hugo.util.ImageUtils;
-
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.wen.hugo.util.schedulers.TimeUtils;
 
 
 public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder> {
@@ -32,23 +28,6 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
         super(R.layout.user_item, null);
         this.ctx = ctx;
         mPresenter = presenter;
-    }
-
-    public static PrettyTime prettyTime = new PrettyTime();
-
-    public static String getDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-        return format.format(date);
-    }
-
-    public static String millisecs2DateString(long timestamp) {
-        long gap = System.currentTimeMillis() - timestamp;
-        if (gap < 1000 * 60 * 60 * 24) {
-            String s = prettyTime.format(new Date(timestamp));
-            return s.replace(" ", "");
-        } else {
-            return getDate(new Date(timestamp));
-        }
     }
 
     @Override
@@ -80,12 +59,12 @@ public class UserPageListAdapter extends BaseQuickAdapter<Status, BaseViewHolder
             statusText.setVisibility(View.VISIBLE);
         }
 
-        helper.setText(R.id.post_time,millisecs2DateString(status.getDate().getTime()));
+        helper.setText(R.id.post_time, TimeUtils.millisecs2DateString(status.getDate().getTime()));
 
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StatusPageActivity.go(view.getContext(),status.getStatus().getObjectId());
+                StatusPageActivity.go(view.getContext(),status);
             }
         });
     }

@@ -5,49 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <include layout="@layout/post_primary_menu_lyt"
         android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#FAFAFA"
-        >
-
-        <EditText
-            android:id="@+id/et_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btn_send"
-            android:layout_toStartOf="@id/btn_send"
-            android:hint="添加评论"
-            android:imeOptions="actionDone"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:textSize="14sp"/>
-
-        <Button
-            android:id="@+id/btn_send"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/send_selector"
-            android:enabled="false"
-            />
-
-    </RelativeLayout>
+        android:layout_alignParentBottom="true"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
-        android:layout_above="@+id/rl"
+        android:layout_above="@id/rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="#F0F0F0"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>
