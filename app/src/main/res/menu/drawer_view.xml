@@ -35,7 +35,7 @@
             android:title="记录瞬间" />
     </group>
 
-    <item android:title="Sub items">
+    <item android:title="题库">
         <menu>
             <item
                 android:id="@+id/add_subject"

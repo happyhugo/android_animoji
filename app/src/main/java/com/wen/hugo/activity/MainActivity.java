@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -27,8 +29,8 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.wen.hugo.R;
-import com.wen.hugo.settingPage.SetttingPageActivity;
 import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
 import com.wen.hugo.followPage.FollowPageActivity;
@@ -37,6 +39,7 @@ import com.wen.hugo.loginAndRegister.LoginActivity;
 import com.wen.hugo.mySubject.MySubjectActivity;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.publishSubject.PublishSubjectActivity;
+import com.wen.hugo.settingPage.SetttingPageActivity;
 import com.wen.hugo.subjectPage.SubjectPageFragment;
 import com.wen.hugo.subjectPage.SubjectPagePresenter;
 import com.wen.hugo.timeLine.TimeLineFragment;
@@ -115,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 .setFirstSelectedPosition(0)
                 .initialise();
 
-
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -124,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
             @Override
             public void onDrawerOpened(View drawerView) {
-
             }
 
             @Override
@@ -219,6 +220,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                     return true;
                 }
             });
+        ImageView avatarView = navigationView.getHeaderView(0).findViewById(R.id.avatarView);
+        ImageView avatarView2 = navigationView.getHeaderView(0).findViewById(R.id.avatarView2);
+        TextView tv = navigationView.getHeaderView(0).findViewById(R.id.tvs);
+        tv.setText(AVUser.getCurrentUser().getUsername());
+        EaseImageUtils.displayAvatar(AVUser.getCurrentUser().getUsername(), avatarView,avatarView2);
     }
 
     @Override
