@@ -19,6 +19,7 @@ import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wen.hugo.R;
 import com.wen.hugo.bean.Subject;
+import com.wen.hugo.util.ActivityUtils;
 
 import java.util.List;
 
@@ -175,7 +176,20 @@ public class MySubjectFragment extends Fragment implements MySubjectContract.Vie
             return;
         }
 
-        setData(refresh, data, end);
+        List<Subject> list = ActivityUtils.getSubjects();
+        for(Subject subject: data){
+             boolean add = true;
+             for(Subject getData: list){
+                 if(getData.getObjectId().equals(subject.getObjectId())){
+                     add = false;
+                     break;
+                 }
+             }
+             if(add){
+                 list.add(subject);
+             }
+        }
+        setData(refresh, list, end);
         if (refresh) {
             mAdapter.setEnableLoadMore(true);
             mSwipeRefreshLayout.setRefreshing(false);

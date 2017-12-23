@@ -1,5 +1,7 @@
 package com.wen.hugo.mySubject;
 
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.wen.hugo.R;
@@ -14,6 +16,7 @@ public class MySubjectListAdapter extends BaseQuickAdapter<Subject, BaseViewHold
     @Override
     protected void convert(BaseViewHolder helper, final Subject subject) {
         helper.setText(R.id.tv_subject,subject.getTitle());
-        helper.setText(R.id.tv_name,"from : "+subject.getUsername());
+        helper.getView(R.id.tv_name).setVisibility(View.INVISIBLE);
     }
 }
+

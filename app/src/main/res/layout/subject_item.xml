@@ -3,30 +3,41 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:padding="16dp">
+              android:background="@color/white"
+              android:layout_marginBottom=".1dip"
+              android:layout_marginTop=".1dip"
+              android:paddingLeft="15.0dip"
+              android:paddingRight="15.0dip">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:orientation="vertical">
+        android:gravity="center">
 
 
         <TextView
             android:id="@+id/tv_subject"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="18dp"
             android:textColor="#212121"
-            android:textSize="14sp"/>
+            android:text="hello world from this world why it is happen I have no any idea to do this problem?"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="#757575"
+            android:text="添加"
+            android:background="#ff00c7a8"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"
+            android:paddingTop="5dip"
+            android:paddingBottom="5dip"
             android:textSize="12sp"/>
     </LinearLayout>
 </LinearLayout>
