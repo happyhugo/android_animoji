@@ -48,4 +48,7 @@
     <color name="recall_black">#61212121</color>
     <color name="recall_black_38">#89ffffff</color>
     <color name="recall_white_54">#89ffffff</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="bg_grey_300">#ffe0e0e0</color>
 </resources>

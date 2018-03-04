@@ -3,11 +3,12 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".ui.ChatActivity"
+             tools:context="io.agora.openvcall.ui.ChatActivity"
              android:keepScreenOn="true">
 
     <io.agora.openvcall.ui.GridVideoViewContainer
         android:id="@+id/grid_video_view_container"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -33,6 +34,29 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/previousMask"
+            android:layout_width="75dp"
+            android:layout_height="200dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:onClick="left"
+            android:src="@drawable/arrow_left"/>
+
+
+        <ImageButton
+            android:id="@+id/nextMask"
+            android:layout_width="75dp"
+            android:layout_height="200dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:onClick="right"
+            android:src="@drawable/arrow_right"/>
 
         <io.agora.propeller.ui.AGLinearLayout
             android:id="@+id/bottom_container"
@@ -151,9 +175,4 @@
             android:layout_above="@id/bottom_container" />
 
     </RelativeLayout>
-    <io.agora.openvcall.tracker.AgoraView
-        android:id="@+id/camera_control_view"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        />
 </FrameLayout>

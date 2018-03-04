@@ -1,21 +1,23 @@
 package io.agora.openvcall.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
-import android.hardware.Camera;
 import android.media.AudioManager;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -26,22 +28,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.agora.tracker.common.Config;
-import com.agora.ui.AGControlView;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ai.deepar.ar.MyCustomizedCameraRenderer;
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.AGEventHandler;
 import io.agora.openvcall.model.ConstantApp;
 import io.agora.openvcall.model.Message;
 import io.agora.openvcall.model.User;
-import io.agora.openvcall.tracker.AGTrackerWrapper;
 import io.agora.propeller.Constant;
 import io.agora.propeller.UserStatusData;
 import io.agora.propeller.VideoInfoData;
@@ -49,6 +49,7 @@ import io.agora.propeller.preprocessing.VideoPreProcessing;
 import io.agora.propeller.ui.RtlLinearLayoutManager;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
+import io.agora.rtc.video.AgoraVideoFrame;
 import io.agora.rtc.video.VideoCanvas;
 
 public class ChatActivity extends BaseActivity implements AGEventHandler {
@@ -67,37 +68,12 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     private volatile boolean mAudioMuted = false;
 
     private volatile int mAudioRouting = -1; // Default
-    private AGTrackerWrapper mTrackerWrapper;
-    private AGControlView mControlView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-        mTrackerWrapper = new AGTrackerWrapper(this, Camera.CameraInfo.CAMERA_FACING_FRONT);
-        mTrackerWrapper.onCreate(this);
-
-        mControlView = (AGControlView) findViewById(R.id.camera_control_view);
-        mControlView.setOnEventListener(mTrackerWrapper.initUIEventListener(null));
-        Config.isDebug = true;
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mTrackerWrapper.onResume(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mTrackerWrapper.onPause(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mTrackerWrapper.onDestroy(this);
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;
@@ -143,17 +119,11 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
             }
         });
 
-        SurfaceView surfaceV = RtcEngine.CreateRendererView(getApplicationContext());
-        rtcEngine().setupLocalVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, 0));
-        surfaceV.setZOrderOnTop(false);
-        surfaceV.setZOrderMediaOverlay(false);
-
+        SurfaceView surfaceV = setupLocalVideo(getApplicationContext());
         mUidsList.put(0, surfaceV); // get first surface view
-
         mGridVideoViewContainer.initViewContainer(this, 0, mUidsList); // first is now full view
-        worker().preview(true, surfaceV, 0);
 
-        worker().joinChannel(channelName, config().mUid);
+
 
         TextView textChannelName = (TextView) findViewById(R.id.channel_name);
         textChannelName.setText(channelName);
@@ -165,6 +135,86 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         fmp.bottomMargin = virtualKeyHeight() + 16;
 
         initMessageList();
+    }
+
+    byte[] pixelData = new byte[480 * 640 * 4];
+    // Tutorial Step 3
+    private SurfaceView setupLocalVideo(Context ctx) {
+        MyCustomizedCameraRenderer myCustomizedCameraRenderer = new MyCustomizedCameraRenderer(ctx);
+        myCustomizedCameraRenderer.addAilistener(new MyCustomizedCameraRenderer.AiListener() {
+            @Override
+            public void onAIReady() {
+                Log.d("ChatActivity", "onAIReady join channel");
+
+                worker().joinChannel(getIntent().getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME), config().mUid);
+            }
+        });
+        myCustomizedCameraRenderer.addFrameAvailableListener(new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader imageReader) {
+                Image image = imageReader.acquireNextImage();//获取下一个
+                Image.Plane[] planes = image.getPlanes();
+                int width = image.getWidth();//设置的宽
+                int height = image.getHeight();//设置的高
+                int pixelStride = planes[0].getPixelStride();//像素个数，RGBA为4
+                int rowStride = planes[0].getRowStride();//这里除pixelStride就是真实宽度
+                int rowPadding = rowStride/pixelStride -  width;//计算多余宽度
+                ByteBuffer buffer = planes[0].getBuffer();//获得buffer
+//                int offset = 0;
+//                for (int i = 0; i < height; ++i) {
+//                    buffer.get(pixelData,offset,width*4);
+//                    offset += width*4;
+//                    buffer.position(buffer.position()+rowPadding*4);
+//                }
+
+                int offset = 0;
+                int position = 0;
+                int mark = (width-1)*pixelStride;
+                for(int i=width;i>0;i--){
+                    position = mark;
+                    for(int j=0;j<height;j++){
+                        pixelData[offset++] = buffer.get(position++);
+                        pixelData[offset++] = buffer.get(position++);
+                        pixelData[offset++] = buffer.get(position++);
+                        pixelData[offset++] = buffer.get(position++);
+                        position = position+rowStride-pixelStride;
+                    }
+                    mark -= pixelStride;
+                }
+
+
+//                Bitmap b = Bitmap.createBitmap(640,480,Bitmap.Config.ARGB_8888);
+//                b.copyPixelsFromBuffer(ByteBuffer.wrap(pixelData));
+//                File f = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis()+".jpg");
+//
+//                try {
+//                    FileOutputStream out = new FileOutputStream(f);
+//                    b.compress(Bitmap.CompressFormat.JPEG, 90, out);
+//                    out.flush();
+//                    out.close();
+//                } catch (FileNotFoundException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+
+
+
+                AgoraVideoFrame vf = new AgoraVideoFrame();
+                vf.buf = pixelData;
+                vf.format = AgoraVideoFrame.FORMAT_RGBA;
+                vf.timeStamp = System.currentTimeMillis();
+                vf.stride = 640;
+                vf.height = 480;
+                vf.rotation = 90;
+                boolean result = worker().getRtcEngine().pushExternalVideoFrame(vf);
+                Log.i("ChatActivity","........"+offset);
+                image.close();//用完需要关闭
+            }
+        });
+        return myCustomizedCameraRenderer;
     }
 
     public void onClickHideIME(View view) {
@@ -258,8 +308,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private void doConfigEngine(String encryptionKey, String encryptionMode) {
         int vProfile = ConstantApp.VIDEO_PROFILES[getVideoProfileIndex()];
-
         worker().configEngine(vProfile, encryptionKey, encryptionMode);
+        worker().getRtcEngine().setExternalVideoSource(true,false,true);
     }
 
     public void onBtn0Clicked(View view) {
@@ -310,8 +360,9 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     }
 
     private void onSwitchCameraClicked() {
-        RtcEngine rtcEngine = rtcEngine();
-        rtcEngine.switchCamera();
+//        RtcEngine rtcEngine = rtcEngine();
+//        rtcEngine.switchCamera();
+        //实现自己的
     }
 
     private void onSwitchSpeakerClicked() {
@@ -325,13 +376,15 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         doLeaveChannel();
         event().removeEventHandler(this);
-
+        MyCustomizedCameraRenderer local= (MyCustomizedCameraRenderer)getLocalView();
+        if (local != null) {
+            local.onDestroy();
+        }
         mUidsList.clear();
     }
 
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
-        worker().preview(false, null, 0);
     }
 
     public void onEndCallClicked(View view) {
@@ -350,12 +403,10 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         ImageView iv = (ImageView) view;
         Object showing = view.getTag();
         if (showing != null && (Boolean) showing) {
-            mVideoPreProcessing.enablePreProcessing(false);
             mVideoPreProcessing.enablePreAudioProcessing(false);
             iv.setTag(null);
             iv.clearColorFilter();
         } else {
-            mVideoPreProcessing.enablePreProcessing(true);
             mVideoPreProcessing.enablePreAudioProcessing(true);
             iv.setTag(true);
             iv.setColorFilter(getResources().getColor(R.color.agora_blue), PorterDuff.Mode.MULTIPLY);
@@ -369,8 +420,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         }
 
         SurfaceView surfaceV = getLocalView();
-        ViewParent parent;
-        if (surfaceV == null || (parent = surfaceV.getParent()) == null) {
+        if (surfaceV == null ) {
             log.warn("onVoiceChatClicked " + view + " " + surfaceV);
             return;
         }
@@ -487,7 +537,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 surfaceV.setZOrderOnTop(!useDefaultLayout);
                 surfaceV.setZOrderMediaOverlay(!useDefaultLayout);
 
-                rtcEngine().setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+                rtcEngine().setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_FIT, uid));
 
                 if (useDefaultLayout) {
                     log.debug("doRenderRemoteUi LAYOUT_TYPE_DEFAULT " + (uid & 0xFFFFFFFFL));
@@ -774,5 +824,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         } else {
             iv.clearColorFilter();
         }
+    }
+
+    public void left(View view) {
+        ((MyCustomizedCameraRenderer)getLocalView()).gotoPrevious();
+    }
+
+    public void right(View view) {
+        ((MyCustomizedCameraRenderer)getLocalView()).gotoNext();
     }
 }

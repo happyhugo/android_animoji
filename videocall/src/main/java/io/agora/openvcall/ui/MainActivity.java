@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.ConstantApp;
 
@@ -20,7 +21,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mains);
+        setContentView(R.layout.activity_main);
     }
 
     @Override
@@ -93,10 +94,10 @@ public class MainActivity extends BaseActivity {
         // Handle presses on the action bar items
 //        switch (item.getItemId()) {
 //            case R.id.action_settings:
-                forwardToSettings();
-                return true;
+//                forwardToSettings();
+//                return true;
 //            default:
-//                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
 //        }
     }
 

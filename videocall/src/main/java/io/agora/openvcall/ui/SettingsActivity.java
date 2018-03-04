@@ -1,14 +1,15 @@
 package io.agora.openvcall.ui;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.ConstantApp;
 
@@ -51,13 +52,13 @@ public class SettingsActivity extends AppCompatActivity {
         // Handle item selection
 //        switch (item.getItemId()) {
 //            case R.id.confirm:
-                doSaveProfile();
-
-                onBackPressed();
-
-                return true;
+//                doSaveProfile();
+//
+//                onBackPressed();
+//
+//                return true;
 //            default:
-//                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
 //        }
     }
 

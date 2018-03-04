@@ -1,7 +1,6 @@
 package io.agora.openvcall.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,18 +12,28 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.Display;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
-import io.agora.openvcall.BuildConfig;
-import io.agora.openvcall.model.*;
-import io.agora.propeller.Constant;
-import io.agora.rtc.RtcEngine;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+
+import io.agora.openvcall.BuildConfig;
+import io.agora.openvcall.model.ConstantApp;
+import io.agora.openvcall.model.CurrentUserSettings;
+import io.agora.openvcall.model.EngineConfig;
+import io.agora.openvcall.model.MyEngineEventHandler;
+import io.agora.openvcall.model.WorkerThread;
+import io.agora.propeller.Constant;
+import io.agora.rtc.RtcEngine;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private final static Logger log = LoggerFactory.getLogger(BaseActivity.class);
@@ -153,33 +162,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private static WorkerThread mWorkerThread;
-
-    public synchronized void initWorkerThread() {
-        if (mWorkerThread == null) {
-            mWorkerThread = new WorkerThread(getApplicationContext());
-            mWorkerThread.start();
-
-            mWorkerThread.waitForReady();
-        }
-    }
-
-    public synchronized WorkerThread getWorkerThread() {
-        return mWorkerThread;
-    }
-
-    public synchronized void deInitWorkerThread() {
-        mWorkerThread.exit();
-        try {
-            mWorkerThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        mWorkerThread = null;
-    }
-
-    public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -244,4 +226,31 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        TextView textVersion = (TextView) findViewById(R.id.app_version);
 //        textVersion.setText(version);
     }
+
+    private static WorkerThread mWorkerThread;
+
+    public synchronized void initWorkerThread() {
+        if (mWorkerThread == null) {
+            mWorkerThread = new WorkerThread(getApplicationContext());
+            mWorkerThread.start();
+
+            mWorkerThread.waitForReady();
+        }
+    }
+
+    public synchronized WorkerThread getWorkerThread() {
+        return mWorkerThread;
+    }
+
+    public synchronized void deInitWorkerThread() {
+        mWorkerThread.exit();
+        try {
+            mWorkerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mWorkerThread = null;
+    }
+
+    public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
 }

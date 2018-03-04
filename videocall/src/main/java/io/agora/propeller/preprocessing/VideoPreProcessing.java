@@ -5,7 +5,5 @@ public class VideoPreProcessing {
         System.loadLibrary("apm-plugin-video-preprocessing");
     }
 
-    public native void enablePreProcessing(boolean enable);
-
     public native void enablePreAudioProcessing(boolean enable);
 }

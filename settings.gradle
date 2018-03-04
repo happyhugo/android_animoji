@@ -1,1 +1,1 @@
-include ':app', ':easeui', ':ui', ':videocall'
+include ':app', ':easeui', ':videocall'

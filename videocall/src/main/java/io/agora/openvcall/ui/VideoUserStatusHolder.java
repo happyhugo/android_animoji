@@ -6,7 +6,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import io.agora.openvcall.R;
+
 
 public class VideoUserStatusHolder extends RecyclerView.ViewHolder {
     public final RelativeLayout mMaskView;

@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import io.agora.openvcall.R;
+
 
 public class VideoProfileAdapter extends RecyclerView.Adapter {
     private Context context;

@@ -4,12 +4,6 @@ repositories {
     jcenter()
 }
 
-repositories {
-    flatDir {
-        dirs '../ui/libs'
-    }
-}
-
 android {
     compileSdkVersion 26
 
@@ -25,17 +19,11 @@ android {
             }
         }
 
-//        ndk {
-//            abiFilters "armeabi-v7a"// DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
-//        }
-
-    }
-    defaultConfig {
         ndk {
-            //设置支持的SO库架构
-            abiFilters 'x86', 'armeabi-v7a' , 'arm64-v8a'
+            abiFilters "armeabi-v7a"// DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -63,6 +51,14 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.android.support:design:26.1.0'
     compile 'org.slf4j:slf4j-api:1.7.21'
-    compile project(':ui')
+    compile 'com.github.tony19:logback-android-core:1.1.1-4'
+    compile('com.github.tony19:logback-android-classic:1.1.1-4') {
+        // workaround issue #73
+        exclude group: 'com.google.android', module: 'android'
+    }
 }

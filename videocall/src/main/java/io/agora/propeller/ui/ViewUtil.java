@@ -7,10 +7,12 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import io.agora.propeller.VideoInfoData;
-import io.agora.openvcall.R;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.agora.openvcall.R;
+import io.agora.propeller.VideoInfoData;
 
 public class ViewUtil {
     protected static final boolean DEBUG_ENABLED = false;
