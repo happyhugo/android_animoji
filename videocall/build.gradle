@@ -8,7 +8,7 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        minSdkVersion 15 // ICE_CREAM_SANDWICH
+        minSdkVersion 19 // ICE_CREAM_SANDWICH
         targetSdkVersion 26
         versionCode 18
         versionName "x.y.z"

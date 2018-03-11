@@ -1,6 +1,8 @@
 package io.agora.openvcall.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -8,6 +10,7 @@ import android.media.AudioManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +72,37 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     private volatile boolean mAudioMuted = false;
 
     private volatile int mAudioRouting = -1; // Default
+
+   private String timu[] = new String[]{
+                                    "1. 给你一个任意的机会，你会选择和谁共进晚餐？(所有的问题男生先回答，两个人都回答完毕点击下一题)",
+                                    "2. 你想要成名吗？以什么方式？",
+                                    "3. 你心中一个完美的日子是怎样的",
+                                    "4. 如果你可以活到 90 岁，而且身心都保持在 30 岁的状态，那这 60 年你想要怎么度过？",
+                                    "5. 关于怎么死去，你有没有过神秘的预感？",
+                                    "6. 举出你和你对面这位的 3 个共同点。",
+                                    "7. 你只有 4 分钟时间，但请在这 4 分钟内尽量详细地讲述你的人生故事。",
+                                    "8. 如果你明天醒来时能得到一种新的能力或品质，你想要的是什么？",
+                                    "9. 如果水晶球可以预测你的未来以及一切，你想要知道什么？",
+                                    "10. 有没有什么是你梦寐以求的？但为什么没有做？",
+                                    "11. 你人生中最大的成就是什么？",
+                                    "12. 你最糟糕的记忆是什么？",
+                                    "13. 如果你知道你只有一年可以活了，你会改变你的生活方式吗？为什么？",
+                                    "14. 轮流分享你认为恋人应该具有的好品质。总共分享 5 个。",
+                                    "15. 你的家庭亲密、温暖吗？你觉得你的童年是不是比其他人更幸福一些？",
+                                    "16. 你与母亲的关系怎样？",
+                                    "17. 要和对面那位成为好朋友，他或者她最应该知道的事情是什么？请与他或者她分享。",
+                                    "18. 告诉你对面那位，你喜欢他（她）什么？必须非常诚实，说一些你可能不会和第一次见面的人说的话。",
+                                    "19. 分享一件你人生中的囧事",
+                                    "20. 你上一次哭是什么时候？当着他人的面还是独自一人？",
+                                    "21. 告诉对面那位，你已经开始喜欢他身上的一些东西。",
+                                    "22. 如果你今夜就会死去，而且没有机会和任何人说，你最遗憾的没有说出口的话是？为什么你还没有告诉他们？",
+                                    "36. 分享一个你的私人困扰，并向你对面那位请求解决建议，请他（她）以自己的方式来解决。然后，再询问他（她）对于这个问题的个人感受。"};
+    private int index = 0;
+    private boolean heisnext = false;
+    private boolean woisnext = false;
+    private TextView next = null;
+    private String temp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,20 +137,20 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         mGridVideoViewContainer.setItemEventHandler(new VideoViewEventListener() {
             @Override
             public void onItemDoubleClick(View v, Object item) {
-                log.debug("onItemDoubleClick " + v + " " + item + " " + mLayoutType);
-
-                if (mUidsList.size() < 2) {
-                    return;
-                }
-
-                UserStatusData user = (UserStatusData) item;
-                int uid = (user.mUid == 0) ? config().mUid : user.mUid;
-
-                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
-                    switchToSmallVideoView(uid);
-                } else {
-                    switchToDefaultVideoView();
-                }
+//                log.debug("onItemDoubleClick " + v + " " + item + " " + mLayoutType);
+//
+//                if (mUidsList.size() < 2) {
+//                    return;
+//                }
+//
+//                UserStatusData user = (UserStatusData) item;
+//                int uid = (user.mUid == 0) ? config().mUid : user.mUid;
+//
+//                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
+//                    switchToSmallVideoView(uid);
+//                } else {
+//                    switchToDefaultVideoView();
+//                }
             }
         });
 
@@ -123,7 +158,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         mUidsList.put(0, surfaceV); // get first surface view
         mGridVideoViewContainer.initViewContainer(this, 0, mUidsList); // first is now full view
 
-
+        next = (TextView)findViewById(R.id.next);
 
         TextView textChannelName = (TextView) findViewById(R.id.channel_name);
         textChannelName.setText(channelName);
@@ -135,6 +170,9 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         fmp.bottomMargin = virtualKeyHeight() + 16;
 
         initMessageList();
+
+        RtcEngine rtcEngine = rtcEngine();
+        rtcEngine.muteLocalAudioStream(true);
     }
 
     byte[] pixelData = new byte[480 * 640 * 4];
@@ -223,8 +261,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         closeIME(findViewById(R.id.msg_content));
 
         findViewById(R.id.msg_input_container).setVisibility(View.GONE);
-        findViewById(R.id.bottom_action_end_call).setVisibility(View.VISIBLE);
-        findViewById(R.id.bottom_action_container).setVisibility(View.VISIBLE);
+        findViewById(R.id.bottom_action_end_call).setVisibility(View.GONE);
+//      findViewById(R.id.bottom_action_container).setVisibility(View.GONE);
     }
 
     private InChannelMessageListAdapter mMsgAdapter;
@@ -245,7 +283,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     private void notifyMessageChanged(Message msg) {
         mMsgList.add(msg);
 
-        int MAX_MESSAGE_COUNT = 16;
+        int MAX_MESSAGE_COUNT = 1;
 
         if (mMsgList.size() > MAX_MESSAGE_COUNT) {
             int toRemove = mMsgList.size() - MAX_MESSAGE_COUNT;
@@ -389,8 +427,28 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     public void onEndCallClicked(View view) {
         log.info("onEndCallClicked " + view);
+        dialog();
+//      finish();
+    }
 
-        finish();
+    protected void dialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("确认退出吗？");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                ChatActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     private VideoPreProcessing mVideoPreProcessing;
@@ -515,6 +573,14 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
         doRenderRemoteUi(uid);
+//        if(!heisnext&&!woisnext) {
+            new Handler(ChatActivity.this.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    next(null);
+                }
+            }, 2000);
+//        }
     }
 
     private void doRenderRemoteUi(final int uid) {
@@ -575,7 +641,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     @Override
     public void onUserOffline(int uid, int reason) {
-        doRemoveRemoteUi(uid);
+//      doRemoveRemoteUi(uid);
+        this.finish();
     }
 
     @Override
@@ -678,11 +745,20 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 break;
 
             case AGEventHandler.EVENT_TYPE_ON_DATA_CHANNEL_MSG:
-
-                peerUid = (Integer) data[0];
-                final byte[] content = (byte[]) data[1];
-                notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
-
+                synchronized (this) {
+//                  peerUid = (Integer) data[0];
+                    final byte[] content = (byte[]) data[1];
+//                  notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
+                    if (new String(content).contains("ready"+index+":")) {
+                        temp = new String(content).split(":")[1];
+                        heisnext = true;
+                        if (woisnext) {
+                            woisnext = false;
+                            heisnext = false;
+                            nextQuestion();
+                        }
+                    }
+                }
                 break;
 
             case AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR: {
@@ -699,6 +775,37 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
                  break;
 
+        }
+    }
+
+    private void sendImready() {
+        if(index<timu.length) {
+            sendChannelMsg("ready" + index + ":" + timu[index]);
+        }
+    }
+
+    private void nextQuestion() {
+        if(index<timu.length) {
+            next.setVisibility(View.VISIBLE);
+            next.setText("下一题");
+            next.setBackgroundColor(R.color.dark_gray);
+            Message msg = new Message(Message.MSG_TYPE_TEXT,
+                    new User(config().mUid, String.valueOf(config().mUid)), temp);
+            index++;
+            notifyMessageChanged(msg);
+        }else{
+            mMsgList.clear();
+            mMsgAdapter.notifyDataSetChanged();
+            findViewById(R.id.msg_input_container).setVisibility(View.GONE);
+            findViewById(R.id.bottom_action_container).setVisibility(View.VISIBLE);
+            next.setVisibility(View.GONE);
+            Toast.makeText(this,"聊天在10s后结束，感谢你的参与",Toast.LENGTH_LONG).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ChatActivity.this.finish();
+                }
+            },10000);
         }
     }
 
@@ -764,7 +871,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     public static final int LAYOUT_TYPE_SMALL = 1;
 
-    private void bindToSmallVideoView(int exceptUid) {
+    int id = 0;
+    private void bindToSmallVideoView(final int exceptUid) {
         if (mSmallVideoViewDock == null) {
             ViewStub stub = (ViewStub) findViewById(R.id.small_video_view_dock);
             mSmallVideoViewDock = (RelativeLayout) stub.inflate();
@@ -781,7 +889,19 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
             mSmallVideoViewAdapter = new SmallVideoViewAdapter(this, config().mUid, exceptUid, mUidsList, new VideoViewEventListener() {
                 @Override
                 public void onItemDoubleClick(View v, Object item) {
-                    switchToDefaultVideoView();
+//                   switchToDefaultVideoView();
+                    if(id==0){
+                        switchToSmallVideoView(config().mUid);
+                        id = config().mUid;
+                    }else{
+                        if(id == config().mUid){
+                            switchToSmallVideoView(exceptUid);
+                            id = exceptUid;
+                        }else{
+                            switchToSmallVideoView(config().mUid);
+                            id = config().mUid;
+                        }
+                    }
                 }
             });
             mSmallVideoViewAdapter.setHasStableIds(true);
@@ -807,6 +927,19 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         }
         recycler.setVisibility(View.VISIBLE);
         mSmallVideoViewDock.setVisibility(View.VISIBLE);
+    }
+
+    public void next(View view){
+        woisnext = true;
+        sendImready();
+        if(heisnext&&woisnext){
+            heisnext = false;
+            woisnext = false;
+            nextQuestion();
+        }else{
+            next.setText("等待对方");
+            next.setBackgroundColor(R.color.agora_blue);
+        }
     }
 
     public void notifyHeadsetPlugged(final int routing) {
