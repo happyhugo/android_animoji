@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.R;
-import com.wen.hugo.bean.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.agora.openvcall.model.Subject;
 
 /**
  * Created by hugo on 11/22/17.

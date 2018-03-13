@@ -13,7 +13,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 

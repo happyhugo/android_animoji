@@ -23,11 +23,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
-import com.wen.hugo.bean.Subject;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This provides methods to help Activities load their UI.
  */
@@ -57,27 +52,5 @@ public class ActivityUtils {
         } else {
             return true;
         }
-    }
-
-    private static List<Subject> lv  = new ArrayList();
-
-    public static boolean addSubject(Subject subject){
-        boolean add = true;
-        for(Subject getData: lv){
-            if(getData.getObjectId().equals(subject.getObjectId())){
-                add = false;
-                break;
-            }
-        }
-        if(add){
-            lv.add(subject);
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public static List<Subject> getSubjects(){
-        return lv;
     }
 }

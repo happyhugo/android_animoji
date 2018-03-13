@@ -1,7 +1,8 @@
-package com.wen.hugo.bean;
+package io.agora.openvcall.model;
 
 import com.avos.avoscloud.AVUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,5 +60,31 @@ public class Subject {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    private static List<Subject> lv  = new ArrayList();
+
+    public static boolean addSubject(Subject subject){
+        boolean add = true;
+        for(Subject getData: lv){
+            if(getData.getObjectId().equals(subject.getObjectId())){
+                add = false;
+                break;
+            }
+        }
+        if(add){
+            lv.add(subject);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static List<Subject> getSubjects(){
+        return lv;
+    }
+
+    public static boolean isSubjectNull(){
+        return lv.size()==0;
     }
 }

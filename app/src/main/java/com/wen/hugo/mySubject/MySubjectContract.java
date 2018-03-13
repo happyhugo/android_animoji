@@ -2,7 +2,7 @@ package com.wen.hugo.mySubject;
 
 import com.wen.hugo.base.BasePresenter;
 import com.wen.hugo.base.BaseView;
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 
 import java.util.List;
 

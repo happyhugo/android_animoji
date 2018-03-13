@@ -39,12 +39,14 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ai.deepar.ar.MyCustomizedCameraRenderer;
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.AGEventHandler;
 import io.agora.openvcall.model.ConstantApp;
 import io.agora.openvcall.model.Message;
+import io.agora.openvcall.model.Subject;
 import io.agora.openvcall.model.User;
 import io.agora.propeller.Constant;
 import io.agora.propeller.UserStatusData;
@@ -72,31 +74,31 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     private volatile boolean mAudioMuted = false;
 
     private volatile int mAudioRouting = -1; // Default
-
-   private String timu[] = new String[]{
-                                    "1. 给你一个任意的机会，你会选择和谁共进晚餐？(所有的问题男生先回答，两个人都回答完毕点击下一题)",
-                                    "2. 你想要成名吗？以什么方式？",
-                                    "3. 你心中一个完美的日子是怎样的",
-                                    "4. 如果你可以活到 90 岁，而且身心都保持在 30 岁的状态，那这 60 年你想要怎么度过？",
-                                    "5. 关于怎么死去，你有没有过神秘的预感？",
-                                    "6. 举出你和你对面这位的 3 个共同点。",
-                                    "7. 你只有 4 分钟时间，但请在这 4 分钟内尽量详细地讲述你的人生故事。",
-                                    "8. 如果你明天醒来时能得到一种新的能力或品质，你想要的是什么？",
-                                    "9. 如果水晶球可以预测你的未来以及一切，你想要知道什么？",
-                                    "10. 有没有什么是你梦寐以求的？但为什么没有做？",
-                                    "11. 你人生中最大的成就是什么？",
-                                    "12. 你最糟糕的记忆是什么？",
-                                    "13. 如果你知道你只有一年可以活了，你会改变你的生活方式吗？为什么？",
-                                    "14. 轮流分享你认为恋人应该具有的好品质。总共分享 5 个。",
-                                    "15. 你的家庭亲密、温暖吗？你觉得你的童年是不是比其他人更幸福一些？",
-                                    "16. 你与母亲的关系怎样？",
-                                    "17. 要和对面那位成为好朋友，他或者她最应该知道的事情是什么？请与他或者她分享。",
-                                    "18. 告诉你对面那位，你喜欢他（她）什么？必须非常诚实，说一些你可能不会和第一次见面的人说的话。",
-                                    "19. 分享一件你人生中的囧事",
-                                    "20. 你上一次哭是什么时候？当着他人的面还是独自一人？",
-                                    "21. 告诉对面那位，你已经开始喜欢他身上的一些东西。",
-                                    "22. 如果你今夜就会死去，而且没有机会和任何人说，你最遗憾的没有说出口的话是？为什么你还没有告诉他们？",
-                                    "36. 分享一个你的私人困扰，并向你对面那位请求解决建议，请他（她）以自己的方式来解决。然后，再询问他（她）对于这个问题的个人感受。"};
+    private String timu[];
+//   private String timu[] = new String[]{
+//                                    "1. 给你一个任意的机会，你会选择和谁共进晚餐？(所有的问题男生先回答，两个人都回答完毕点击下一题)",
+//                                    "2. 你想要成名吗？以什么方式？",
+//                                    "3. 你心中一个完美的日子是怎样的",
+//                                    "4. 如果你可以活到 90 岁，而且身心都保持在 30 岁的状态，那这 60 年你想要怎么度过？",
+//                                    "5. 关于怎么死去，你有没有过神秘的预感？",
+//                                    "6. 举出你和你对面这位的 3 个共同点。",
+//                                    "7. 你只有 4 分钟时间，但请在这 4 分钟内尽量详细地讲述你的人生故事。",
+//                                    "8. 如果你明天醒来时能得到一种新的能力或品质，你想要的是什么？",
+//                                    "9. 如果水晶球可以预测你的未来以及一切，你想要知道什么？",
+//                                    "10. 有没有什么是你梦寐以求的？但为什么没有做？",
+//                                    "11. 你人生中最大的成就是什么？",
+//                                    "12. 你最糟糕的记忆是什么？",
+//                                    "13. 如果你知道你只有一年可以活了，你会改变你的生活方式吗？为什么？",
+//                                    "14. 轮流分享你认为恋人应该具有的好品质。总共分享 5 个。",
+//                                    "15. 你的家庭亲密、温暖吗？你觉得你的童年是不是比其他人更幸福一些？",
+//                                    "16. 你与母亲的关系怎样？",
+//                                    "17. 要和对面那位成为好朋友，他或者她最应该知道的事情是什么？请与他或者她分享。",
+//                                    "18. 告诉你对面那位，你喜欢他（她）什么？必须非常诚实，说一些你可能不会和第一次见面的人说的话。",
+//                                    "19. 分享一件你人生中的囧事",
+//                                    "20. 你上一次哭是什么时候？当着他人的面还是独自一人？",
+//                                    "21. 告诉对面那位，你已经开始喜欢他身上的一些东西。",
+//                                    "22. 如果你今夜就会死去，而且没有机会和任何人说，你最遗憾的没有说出口的话是？为什么你还没有告诉他们？",
+//                                    "36. 分享一个你的私人困扰，并向你对面那位请求解决建议，请他（她）以自己的方式来解决。然后，再询问他（她）对于这个问题的个人感受。"};
     private int index = 0;
     private boolean heisnext = false;
     private boolean woisnext = false;
@@ -173,6 +175,9 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         RtcEngine rtcEngine = rtcEngine();
         rtcEngine.muteLocalAudioStream(true);
+
+        List<String> subject = Subject.getSubjects().get(0).getContent();
+        timu = subject.toArray(new String[subject.size()]);
     }
 
     byte[] pixelData = new byte[480 * 640 * 4];

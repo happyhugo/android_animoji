@@ -2,7 +2,7 @@ package com.wen.hugo.mySubject;
 
 import android.support.annotation.NonNull;
 
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.Constans;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;

@@ -57,6 +57,7 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'com.github.tony19:logback-android-core:1.1.1-4'
+    compile 'cn.leancloud.android:avoscloud-sdk:v4.4.4'
     compile('com.github.tony19:logback-android-classic:1.1.1-4') {
         // workaround issue #73
         exclude group: 'com.google.android', module: 'android'

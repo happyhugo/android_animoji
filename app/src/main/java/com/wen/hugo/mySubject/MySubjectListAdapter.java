@@ -5,7 +5,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.wen.hugo.R;
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 
 public class MySubjectListAdapter extends BaseQuickAdapter<Subject, BaseViewHolder> {
 

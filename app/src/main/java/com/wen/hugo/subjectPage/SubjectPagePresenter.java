@@ -2,13 +2,13 @@ package com.wen.hugo.subjectPage;
 
 import android.support.annotation.NonNull;
 
-import com.wen.hugo.bean.Subject;
 import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.Constans;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
 
+import io.agora.openvcall.model.Subject;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

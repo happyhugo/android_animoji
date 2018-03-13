@@ -2,7 +2,7 @@ package com.wen.hugo.publishSubject;
 
 import com.wen.hugo.base.BasePresenter;
 import com.wen.hugo.base.BaseView;
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 
 /**
  * Created by hugo on 11/21/17.

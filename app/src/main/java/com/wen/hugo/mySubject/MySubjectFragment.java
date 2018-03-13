@@ -18,13 +18,12 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVUser;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wen.hugo.R;
-import com.wen.hugo.bean.Subject;
-import com.wen.hugo.util.ActivityUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.agora.openvcall.model.Subject;
 
 /**
  * Created by hugo on 11/22/17.
@@ -176,7 +175,7 @@ public class MySubjectFragment extends Fragment implements MySubjectContract.Vie
             return;
         }
 
-        List<Subject> list = ActivityUtils.getSubjects();
+        List<Subject> list = Subject.getSubjects();
         for(Subject subject: data){
              boolean add = true;
              for(Subject getData: list){

@@ -8,7 +8,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
-import com.wen.hugo.bean.Subject;
+import io.agora.openvcall.model.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.local.LocalDataSource;
 import com.wen.hugo.data.remote.AVRemoteDataSource;
