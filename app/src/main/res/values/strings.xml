@@ -9,4 +9,12 @@
     <string name="status_none_follow_desc">无</string>
     <string name="status_follow">关注</string>
     <string name="network_error">网络有问题，请点击重试</string>
+    <string name="forgot_password">找回密码</string>
+    <string name="new_user">新用户</string>
+    <string name="Login">登录</string>
+    <string name="phone_number">手机号</string>
+    <string name="password">密码</string>
+    <string name="layout_dialog_loading">正在加载</string>
+    <string name="code">短信验证码</string>
+    <string name="send_code">发送验证码</string>
 </resources>

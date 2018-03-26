@@ -1,11 +1,12 @@
-package com.wen.hugo.loginAndRegister;
+package com.wen.hugo.register;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.avos.avoscloud.AVException;
-import com.hyphenate.EMCallBack;
+import com.avos.avoscloud.AVUser;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.wen.hugo.data.DataSource;
 import com.wen.hugo.util.schedulers.BaseSchedulerProvider;
 
@@ -19,13 +20,13 @@ import io.reactivex.functions.Consumer;
  * Created by hugo on 11/22/17.
  */
 
-public class LoginPresenter implements LoginContract.Presenter {
+public class RegisterPresenter implements RegisterContract.Presenter {
 
     @NonNull
     private final DataSource mDataRepository;
 
     @NonNull
-    private final LoginContract.View mLoginView;
+    private final RegisterContract.View mLoginView;
 
     @NonNull
     private final BaseSchedulerProvider mSchedulerProvider;
@@ -33,9 +34,9 @@ public class LoginPresenter implements LoginContract.Presenter {
     @NonNull
     private CompositeDisposable mCompositeDisposable;
 
-    public LoginPresenter( @NonNull DataSource dataRepository,
-                                @NonNull LoginContract.View loginView,
-                                @NonNull BaseSchedulerProvider schedulerProvider) {
+    public RegisterPresenter(@NonNull DataSource dataRepository,
+                             @NonNull RegisterContract.View loginView,
+                             @NonNull BaseSchedulerProvider schedulerProvider) {
         mDataRepository = dataRepository;
         mLoginView = loginView;
 
@@ -56,33 +57,21 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(final String name,final String password) {
+    public void register(final String name,final String password) {
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(password)) {
             mLoginView.setLoadingIndicator(true);
+
             mCompositeDisposable.add(
                     Observable.create(new ObservableOnSubscribe<String>() {
                         @Override
                         public void subscribe(ObservableEmitter<String> e) throws Exception {
                             try{
-                                mDataRepository.login(name,password);
-                                EMClient.getInstance().login(name, password, new EMCallBack() {
-
-                                            @Override
-                                            public void onSuccess() {
-                                            }
-
-                                            @Override
-                                            public void onProgress(int progress, String status) {
-
-                                            }
-
-                                            @Override
-                                            public void onError(int code, String error) {
-                                                  System.out.println("login fail");
-                                            }
-                                        });
+                                mDataRepository.register(name,password);
+                                EMClient.getInstance().createAccount(name,password);
                                 e.onNext("");
                             }catch(AVException exception){
+                                e.onNext(exception.getMessage());
+                            }catch (HyphenateException exception){
                                 e.onNext(exception.getMessage());
                             }
                         }
@@ -93,7 +82,9 @@ public class LoginPresenter implements LoginContract.Presenter {
                         @Override
                         public void accept(String reason) throws Exception {
                             mLoginView.setLoadingIndicator(false);
+                            AVUser.logOut();
                             if(TextUtils.isEmpty(reason)){
+                                mLoginView.showLoadingError("注册成功");
                                 mLoginView.succeed();
                             }else{
                                 mLoginView.showLoadingError(reason);

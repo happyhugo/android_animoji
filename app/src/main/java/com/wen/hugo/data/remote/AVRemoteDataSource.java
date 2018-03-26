@@ -13,7 +13,6 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
-import io.agora.openvcall.model.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.DataSource;
 
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.agora.openvcall.model.Subject;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -325,6 +325,14 @@ public class AVRemoteDataSource implements DataSource {
     @Override
     public void login(String username,String password) throws AVException {
         AVUser.logIn(username,password);
+    }
+
+    @Override
+    public void register(String username, String password) throws AVException {
+        AVUser user = new AVUser();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.signUp();
     }
 
     @Override

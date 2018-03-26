@@ -80,6 +80,8 @@ public class Subject {
         }
     }
 
+
+
     public static List<Subject> getSubjects(){
         return lv;
     }

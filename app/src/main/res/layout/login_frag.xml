@@ -1,52 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    tools:context=".loginAndRegister.LoginActivity">
+    android:layout_height="match_parent">
 
+    <FrameLayout
+        android:id="@+id/de_frm_backgroud"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="200dp"
+        <ImageView
+            android:id="@+id/de_img_backgroud"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="-50dp"
+            android:layout_marginRight="-300dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/de_bg" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="请输入用户名" />
+        android:orientation="vertical">
 
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="200dp"
-        android:inputType="textPassword"
-        android:layout_height="wrap_content"
-        android:hint="请输入密码"
-        android:layout_below="@+id/usernameEditText" />
-
-    <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/passwordEditText"
-        android:layout_marginTop="10dp">
-
-
-        <Button
-            android:id="@+id/login"
-            android:layout_width="90dp"
+        <ImageView
+            android:id="@+id/de_login_logo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="登录" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="91dip"
+            android:src="@drawable/seal_logo" />
 
-        <Button
-            android:id="@+id/register"
-            android:layout_width="90dp"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="注册" />
+            android:layout_marginTop="72dip"
+            android:orientation="vertical">
 
-    </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/liner1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dip"
+                android:layout_marginRight="30dip"
+                android:orientation="horizontal">
+
+
+                <com.wen.hugo.widget.ClearWriteEditText
+                    android:id="@+id/de_login_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rc_ed_public_service_search_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="用户名"
+                    android:inputType="textPersonName"
+                    android:maxLength="11"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF" />
+
+                <FrameLayout
+                    android:id="@+id/fr_username_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@+id/de_login_phone"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone">
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/liner2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dip"
+                android:layout_marginRight="30dip"
+                android:layout_marginTop="37dip"
+                android:orientation="horizontal">
+
+
+                <com.wen.hugo.widget.ClearWriteEditText
+                    android:id="@+id/de_login_password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rc_ed_public_service_search_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF" />
+
+                <FrameLayout
+                    android:id="@+id/fr_pass_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@+id/de_login_password"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone">
+
+                </FrameLayout>
+            </RelativeLayout>
+
+
+            <Button
+                android:id="@+id/de_login_sign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dip"
+                android:layout_marginRight="30dip"
+                android:layout_marginTop="34dip"
+                android:background="@drawable/rs_select_btn_blue"
+                android:text="@string/Login"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/de_login_forgot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="15dp"
+        android:text="@string/forgot_password"
+        android:textColor="#999999"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="15dp"
+        android:text="Powered by Hugo"
+        android:textColor="#484848"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/de_login_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:padding="15dp"
+        android:text="@string/new_user"
+        android:textColor="#999999"
+        android:textSize="14sp" />
 
 </RelativeLayout>

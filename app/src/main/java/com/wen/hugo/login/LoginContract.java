@@ -1,4 +1,4 @@
-package com.wen.hugo.loginAndRegister;
+package com.wen.hugo.login;
 
 import com.wen.hugo.base.BasePresenter;
 import com.wen.hugo.base.BaseView;

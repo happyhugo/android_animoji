@@ -1,6 +1,7 @@
 package com.wen.hugo.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -35,7 +36,7 @@ import com.wen.hugo.chatPage.ChatActivity;
 import com.wen.hugo.data.DataRepository;
 import com.wen.hugo.followPage.FollowPageActivity;
 import com.wen.hugo.followPage.FollowPageFragment;
-import com.wen.hugo.loginAndRegister.LoginActivity;
+import com.wen.hugo.login.LoginActivity;
 import com.wen.hugo.mySubject.MySubjectActivity;
 import com.wen.hugo.publishStatus.PublishStatusActivity;
 import com.wen.hugo.publishSubject.PublishSubjectActivity;
@@ -378,6 +379,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         if (resultCode == RESULT_OK) {
             if (requestCode == LOGOUT) {
                 AVUser.logOut();
+                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+                sp.edit().putString("loginToken", "");
                 EMClient.getInstance().logout(true);
                 startActivity(new Intent(this, LoginActivity.class));
                 this.finish();

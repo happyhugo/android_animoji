@@ -8,13 +8,13 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
-import io.agora.openvcall.model.Subject;
 import com.wen.hugo.bean.User;
 import com.wen.hugo.data.local.LocalDataSource;
 import com.wen.hugo.data.remote.AVRemoteDataSource;
 
 import java.util.List;
 
+import io.agora.openvcall.model.Subject;
 import io.reactivex.Observable;
 
 
@@ -149,6 +149,11 @@ public class DataRepository implements DataSource{
     @Override
     public void login(String username, String password) throws AVException {
         mAVRemoteDataSource.login(username,password);
+    }
+
+    @Override
+    public void register(String username, String password) throws AVException {
+        mAVRemoteDataSource.register(username,password);
     }
 
     @Override

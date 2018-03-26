@@ -7,11 +7,11 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.wen.hugo.bean.Comment;
 import com.wen.hugo.bean.Status;
-import io.agora.openvcall.model.Subject;
 import com.wen.hugo.bean.User;
 
 import java.util.List;
 
+import io.agora.openvcall.model.Subject;
 import io.reactivex.Observable;
 
 
@@ -60,6 +60,8 @@ public interface DataSource {
     void deleteFile(String url);
 
     void login(String username,String password) throws AVException;
+
+    void register(String username,String password) throws AVException;
 
     void signUp(User user);
 

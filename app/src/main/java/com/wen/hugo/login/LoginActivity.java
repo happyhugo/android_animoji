@@ -1,7 +1,9 @@
-package com.wen.hugo.loginAndRegister;
+package com.wen.hugo.login;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.wen.hugo.R;
 import com.wen.hugo.data.DataRepository;
@@ -15,6 +17,12 @@ public class LoginActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+           /*set it to be no title*/
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        /*set it to be full screen*/
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.login_activity);
 
     LoginFragment loginFragment =

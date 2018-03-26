@@ -11,14 +11,16 @@
         android:name=".App"
         android:theme="@style/Theme.DesignDemo" >
         <activity
-            android:name=".loginAndRegister.LoginActivity"
-            android:label="36问">
+            android:name=".login.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".login.LoginActivity" />
         <activity android:name=".activity.MainActivity" />
+        <activity android:name=".register.RegisterActivity" />
         <activity android:name=".publishStatus.PublishStatusActivity"
             android:label="发布状态"/>
         <activity android:name=".publishSubject.PublishSubjectActivity"
