@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.wen.hugo.R;
+import com.wen.hugo.randomMatch.MatchActivity;
 
 import java.util.List;
 
@@ -22,7 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.agora.openvcall.model.Subject;
-import io.agora.openvcall.ui.MainActivity;
 
 /**
  * Created by hugo on 11/22/17.
@@ -184,7 +184,7 @@ public class SubjectPageFragment extends Fragment implements SubjectPageContract
             Toast.makeText(getContext(), "请先添加测试题目，再匹配", Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent(getActivity(), MainActivity.class);
+        Intent intent = new Intent(getActivity(), MatchActivity.class);
         startActivity(intent);
     }
 }

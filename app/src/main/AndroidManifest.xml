@@ -41,6 +41,8 @@
             android:label="关注" />
         <activity android:name=".settingPage.SetttingPageActivity"
             android:label="设置" />
+        <activity android:name=".randomMatch.MatchActivity"
+            android:label="匹配" />
 
         <!-- huanxin  -->
         <activity android:name=".chatPage.ChatActivity"
