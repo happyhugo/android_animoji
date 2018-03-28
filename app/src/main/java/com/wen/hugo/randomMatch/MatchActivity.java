@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.avos.avoscloud.AVCloud;
 import com.avos.avoscloud.AVException;
@@ -14,13 +15,14 @@ import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.easeui.EaseConstant;
 import com.wen.hugo.R;
-import com.wen.hugo.chatPage.ChatActivity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.agora.openvcall.model.ConstantApp;
+import io.agora.openvcall.ui.ChatActivity;
 
 /**
  * Created by hugo on 11/29/17.
@@ -35,7 +37,12 @@ public class MatchActivity extends Activity {
         super.onCreate(arg0);
         setContentView(R.layout.match_activity);
         setLoading();
-        match();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                matchOk("hello");
+            }
+        },4000);
     }
 
 
@@ -113,9 +120,12 @@ public class MatchActivity extends Activity {
     public void matchOk(String username){
         mProgressDialog.dismiss();
         MatchActivity.this.finish();
-        Intent intent = new Intent(MatchActivity.this, ChatActivity.class);
-        intent.putExtra(EaseConstant.EXTRA_USER_ID, username);
-        startActivity(intent);
+//        Intent intent = new Intent(MatchActivity.this, ChatActivity.class);
+//        intent.putExtra(EaseConstant.EXTRA_USER_ID, username);
+//        startActivity(intent);
+        Intent i = new Intent(this, ChatActivity.class);
+        i.putExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME, "helloworld");
+        startActivity(i);
     }
 
     public void addListener(){

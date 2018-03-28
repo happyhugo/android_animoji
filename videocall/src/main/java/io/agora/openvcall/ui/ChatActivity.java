@@ -123,6 +123,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     @Override
     protected void initUIandEvent() {
+        initWorkerThread();
         event().addEventHandler(this);
 
         Intent i = getIntent();
