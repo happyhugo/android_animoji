@@ -36,7 +36,10 @@ This application is a social app like weixin. And it is have a different functio
 - qiniu (https://www.qiniu.com/)
 
 ## Screenshots
-![](a.jpg)[](b.jpg)[](c.jpg)
+<img src='a.jpg' width="375">
+![](a.jpg)
+![](b.jpg)
+![](c.jpg)
 ![](d.jpg)
 ![](e.jpg)
 ![](f.jpg)
