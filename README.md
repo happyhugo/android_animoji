@@ -37,12 +37,11 @@ This application is a social app like weixin. And it is have a different functio
 
 ## Screenshots
 <img src='a.jpg' width="375">
-![](a.jpg)
-![](b.jpg)
-![](c.jpg)
-![](d.jpg)
-![](e.jpg)
-![](f.jpg)
-![](g.jpg)
-![](h.jpg)
-![](i.jpg)
+<img src='b.jpg' width="375">
+<img src='c.jpg' width="375">
+<img src='d.jpg' width="375">
+<img src='e.jpg' width="375">
+<img src='f.jpg' width="375">
+<img src='g.jpg' width="375">
+<img src='h.jpg' width="375">
+<img src='i.jpg' width="375">
