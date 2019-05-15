@@ -36,8 +36,8 @@ This application is a social app like weixin. And it is have a different functio
 - qiniu (https://www.qiniu.com/)
 
 ## Screenshots
-<img src='a.jpg' width="300">   <img src='b.jpg' width="300">   <img src='c.jpg' width="300">
+<img src='a.jpg' width="250">     <img src='b.jpg' width="250">     <img src='c.jpg' width="250">
 
-<img src='d.jpg' width="300">   <img src='e.jpg' width="300">   <img src='f.jpg' width="300">
+<img src='d.jpg' width="250">     <img src='e.jpg' width="250">     <img src='f.jpg' width="250">
 
-<img src='g.jpg' width="300">   <img src='h.jpg' width="300">   <img src='i.jpg' width="300">
+<img src='g.jpg' width="250">     <img src='h.jpg' width="250">     <img src='i.jpg' width="250">
