@@ -25,6 +25,8 @@ This application is a social app like weixin. And it is have a different functio
 - easeui for instance message
 - Agora for media stream
 - offline animoji function
+- theme use soul app
+- offline animoji functio
 
 ## Useage
 - you should register learncloud,easeui,agora,qiniu account . replace the id they gives (find in git log) 
@@ -34,8 +36,12 @@ This application is a social app like weixin. And it is have a different functio
 - qiniu (https://www.qiniu.com/)
 
 ## Screenshots
-![](art/1-1.png)
-![](art/1-2.png)
-![](art/1-3.png)
-![](art/1-4.png)
-![](art/1-5.png)
+![](art/a.jpg)
+![](art/b.jpg)
+![](art/c.jpg)
+![](art/d.jpg)
+![](art/e.jpg)
+![](art/f.jpg)
+![](art/g.jpg)
+![](art/h.jpg)
+![](art/i.jpg)
