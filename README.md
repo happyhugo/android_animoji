@@ -28,10 +28,10 @@ This application is a social app like weixin. And it is have a different functio
 
 ## Useage
 － you should register learncloud,easeui,agora,qiniu account . replace the id they gives (find in git log)
-－ [LearnCloud](https://leancloud.cn/)
-－ [easeUi](http://www.easemob.com)
-－ [agora](https://www.agora.io/)
-－ [qiniu](https://www.qiniu.com/)
+－ LearnCloud (https://leancloud.cn/)
+－ easeUi (http://www.easemob.com)
+－ agora (https://www.agora.io/)
+－ qiniu (https://www.qiniu.com/)
 
 ## Screenshots
 ![](art/1-1.png)
